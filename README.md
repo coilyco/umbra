@@ -16,9 +16,28 @@ cli-guard is a **security-boundary** framework for [urfave/cli][urfave/cli] v3 a
 - per-invocation CONNECT proxy with consumer-supplied egress allowlist
 - public exit-code taxonomy for orchestrators
 
+The repository also ships **`kdl-specs`**, an installable no-code driver that
+turns KDL policy plus committed locks into standalone guarded CLIs. It can
+generate, lock, check for upstream skew, build, and run a consumer tool without
+hand-written Go source.
+
+## Install kdl-specs
+
+Tagged Forgejo releases publish raw `kdl-specs` binaries for Linux, macOS, and
+Windows on amd64 and arm64, plus `SHA256SUMS`. Go users can install the same
+tagged driver directly:
+
+```sh
+GOPRIVATE=forgejo.coilysiren.me go install forgejo.coilysiren.me/coilyco-flight-deck/cli-guard/cmd/kdl-specs@vX.Y.Z
+```
+
+`kdl-specs --version` reports both the installed driver version and the
+cli-guard module ref that `lock` will freeze by default. The driver invokes the
+Go toolchain when it resolves locks and builds generated CLIs.
+
 ## Documentation
 
-See [`docs/FEATURES.md`](docs/FEATURES.md) for a feature inventory, [`examples/`](examples/) for runnable demos one per primitive, and the [CLI reference](https://coilysiren.github.io/cli-guard/cli/) for the rendered command tree of every example. Local dev verbs run through `make` (see the [`Makefile`](Makefile)).
+See the [`kdl-specs` guide](docs/kdl-specs.md), [`docs/FEATURES.md`](docs/FEATURES.md) for a feature inventory, [`examples/`](examples/) for runnable demos one per primitive, and the [CLI reference](https://coilysiren.github.io/cli-guard/cli/) for the rendered command tree of every example. Local dev verbs run through `make` (see the [`Makefile`](Makefile)).
 
 ## Support
 

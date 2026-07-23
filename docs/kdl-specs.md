@@ -2,6 +2,11 @@
 
 `ward-kdl` is a **no-code** CLI: the consumer authors only policy plus its committed locks, never Go or build glue. `kdl-specs` is the uv-style driver. See [specverb.md](specverb.md). Every spec may carry a top-level [`description`](kdl-description.md) node: standing context, not a comment header.
 
+## Install
+
+See [install kdl-specs](kdl-specs-install.md) for release binaries, checksums,
+`go install`, and the driver-to-framework version contract.
+
 ## Discovery and merging
 
 A `--guardfile` selects a **binary**, not the whole build: the driver reads every `*.guardfile.kdl` in that file's directory sharing its `wrap <binary>` name (`Group[0]`) and merges them, each mounting as its own command group. With no `--guardfile`, the cwd must resolve to one binary, else the driver lists them and asks you to pick. A different wrap name is a **separate** binary, never merged in.

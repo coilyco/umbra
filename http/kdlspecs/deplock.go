@@ -74,13 +74,26 @@ func readDepLock(path string) (*DepLock, error) {
 	return &dl, nil
 }
 
-// generatorVersion is the driver's own version, a staleness input so a released
-// driver rebuilds older caches; "(devel)" from a source checkout.
-func generatorVersion() string {
+// buildVersion is stamped into release binaries. Go-installed binaries fall
+// back to module build info, which already carries the installed tag.
+var buildVersion string
+
+// DriverVersion reports the installed kdl-specs version. Release binaries use
+// their stamped tag, Go installs use build info, and source reports "(devel)".
+func DriverVersion() string {
+	if buildVersion != "" {
+		return buildVersion
+	}
 	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" {
 		return info.Main.Version
 	}
 	return "(devel)"
+}
+
+// DefaultCLIGuardRef is the cli-guard module query a lock operation will freeze
+// when the caller does not pass --cli-guard-ref.
+func DefaultCLIGuardRef() string {
+	return cliGuardVersion("")
 }
 
 // cliGuardVersion resolves the cli-guard module query to freeze into the lock:
@@ -89,7 +102,7 @@ func cliGuardVersion(ref string) string {
 	if ref != "" {
 		return ref
 	}
-	if v := generatorVersion(); v != "" && v != "(devel)" {
+	if v := DriverVersion(); v != "" && v != "(devel)" {
 		return v
 	}
 	return "latest"

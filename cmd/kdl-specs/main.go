@@ -1,5 +1,5 @@
 // Command kdl-specs is the no-code uv-style driver for a spec-driven
-// consumer CLI: gen / lock / skew / run. See docs/kdl-specs.md.
+// consumer CLI: gen / lock / skew / build / run. See docs/kdl-specs.md.
 package main
 
 import (
@@ -32,8 +32,9 @@ func exitCode(err error) int {
 // root flag so every verb reads the same value.
 func app() *cli.Command {
 	return &cli.Command{
-		Name:  "kdl-specs",
-		Usage: "no-code driver for a spec-driven consumer CLI (gen / lock / skew / run)",
+		Name:    "kdl-specs",
+		Usage:   "no-code driver for a spec-driven consumer CLI (gen / lock / skew / build / run)",
+		Version: fmt.Sprintf("%s (cli-guard ref %s)", kdlspecs.DriverVersion(), kdlspecs.DefaultCLIGuardRef()),
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "guardfile",

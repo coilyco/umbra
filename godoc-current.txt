@@ -1313,7 +1313,7 @@ shell-only consumers. See docs/architecture.md for payload flow and flags.
 ## forgejo.coilysiren.me/coilyco-flight-deck/cli-guard/cmd/kdl-specs
 
 Command kdl-specs is the no-code uv-style driver for a spec-driven consumer CLI:
-gen / lock / skew / run. See docs/kdl-specs.md.
+gen / lock / skew / build / run. See docs/kdl-specs.md.
 
 ## forgejo.coilysiren.me/coilyco-flight-deck/cli-guard/http/egress
 
@@ -1833,6 +1833,14 @@ func Build(opts Options) error
     Build materializes the consumer binary out-of-band (same cache +
     staleness path as Run) and copies it to opts.Out instead of execing it.
     See kdl-specs.md.
+
+func DefaultCLIGuardRef() string
+    DefaultCLIGuardRef is the cli-guard module query a lock operation will
+    freeze when the caller does not pass --cli-guard-ref.
+
+func DriverVersion() string
+    DriverVersion reports the installed kdl-specs version. Release binaries use
+    their stamped tag, Go installs use build info, and source reports "(devel)".
 
 func Gen(opts Options) error
     Gen renders the merged consumer main.go (cache, or --out for inspection) and

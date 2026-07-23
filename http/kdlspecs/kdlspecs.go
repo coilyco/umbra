@@ -529,7 +529,7 @@ func materialize(opts Options) (string, *group, error) {
 		GuardfileHash:    hashMembers(g.Members),
 		SpecLockHash:     hashConcat(orderedSpecs(g.Members, specByPath)...),
 		DepLockHash:      hashBytes(depRaw),
-		GeneratorVersion: generatorVersion(),
+		GeneratorVersion: DriverVersion(),
 		LDVersion:        opts.Version,
 		BuiltAt:          time.Now().UTC().Format(time.RFC3339),
 	}

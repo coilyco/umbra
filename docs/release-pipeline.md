@@ -21,16 +21,16 @@ last-known-good, and only gate-green shas release.
 - The `release` push fires `.forgejo/workflows/release.yml` (stage 2) under a
   no-cancel concurrency queue, so promoted shas release in sequence. The
   workflow first verifies the matching draft tag exists, then the **release**
-  job: `tag-bump` reads the conventional commits since the last semver tag and
-  computes the next version (`feat` -> minor, `fix` -> patch, `!:` or
-  `BREAKING CHANGE` -> major, patch otherwise), creates the tag, then
-  `create-release` cuts the Forgejo release. Both writes use the auto-issued
-  job token, so only the promote push needs the cross-repo secret.
+  job: `tag-bump` applies the automatic minor bump (major stays hand-driven),
+  creates the tag, then
+  builds the six-platform `kdl-specs` matrix, creates the Forgejo release, and
+  attaches every binary plus `SHA256SUMS`. The writes use the auto-issued job
+  token, so only the promote push needs the cross-repo secret.
 
-cli-guard ships no Homebrew formula: it is a library plus the
-`cmd/cli-guard-hook` binary, consumed through `go.mod`, not installed via brew.
-So there is no formula-bump job here (ward has one, pointing at the
-centralized taps).
+The release assets cover Linux, macOS, and Windows on amd64 and arm64. The
+stamped `kdl-specs` version is also the default cli-guard ref frozen by
+`kdl-specs lock`. A tagged `go install` is the source-install alternative.
+cli-guard ships no Homebrew formula, so there is no formula-bump job here.
 
 ## Tag-only by design: cli-guard does not bump its consumers
 

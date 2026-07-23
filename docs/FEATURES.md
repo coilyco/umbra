@@ -26,7 +26,7 @@ Grouped by **guarded surface** over a shared `pkg/`. See [architecture.md](archi
 ### HTTP request surface (`http/`)
 
 - **egress** - Per-run CONNECT proxy with consumer allowlist.
-- **guardfile** / **specverb** / **opcore** / **kdl-specs** / **codegen** - Spec-driven HTTP verbs and code generation. See [specverb.md](specverb.md) and [features-detail.md](features-detail.md).
+- **guardfile** / **specverb** / **opcore** / **codegen** / **cmd/kdl-specs** - Spec-driven HTTP engine, codegen, and packaged no-code driver. See [kdl-specs.md](kdl-specs.md).
 - **complex actions** - `wrap`-block `poll`/`call`/`collect` verbs; the mount form shadows its leaf. See [specverb-actions.md](specverb-actions.md).
 - **guarded rollback** - `compensate` + `canary` health-window rollback. See [specverb-rollback.md](specverb-rollback.md).
 - **respfmt** - JSON renderer + JMESPath, five formats.
@@ -55,7 +55,7 @@ Grouped by **guarded surface** over a shared `pkg/`. See [architecture.md](archi
 
 - `Makefile` is the source of truth for dev verbs (cli-guard is unguarded).
 - `.golangci.yaml` / `staticcheck.conf` mirror urfave/cli; CI runs vet, build, `test -race`, golangci-lint, trufflehog.
-- Release is automated, Forgejo-canonical, with commit-scoped draft tags on `main` and public release tags on `release`; consumers self-bump. See [release-pipeline.md](release-pipeline.md).
+- Release is automated and Forgejo-canonical, with commit-scoped draft tags on `main`, public release tags on `release`, and packaged `kdl-specs` binaries; consumers self-bump. See [release-pipeline.md](release-pipeline.md).
 
 ## See also
 

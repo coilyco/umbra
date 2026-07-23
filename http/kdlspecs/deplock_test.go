@@ -80,3 +80,18 @@ func TestCLIGuardVersion(t *testing.T) {
 		t.Error("empty ref resolved to empty version")
 	}
 }
+
+func TestStampedDriverVersionIsDefaultCLIGuardRef(t *testing.T) {
+	old := buildVersion
+	buildVersion = "v1.2.3"
+	t.Cleanup(func() {
+		buildVersion = old
+	})
+
+	if got := DriverVersion(); got != buildVersion {
+		t.Errorf("DriverVersion() = %q, want %q", got, buildVersion)
+	}
+	if got := DefaultCLIGuardRef(); got != buildVersion {
+		t.Errorf("DefaultCLIGuardRef() = %q, want %q", got, buildVersion)
+	}
+}
