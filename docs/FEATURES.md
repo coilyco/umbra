@@ -11,7 +11,7 @@ Grouped by **guarded surface** over a shared `pkg/`. See [architecture.md](archi
 - **passthrough** - Audited urfave subcommand around an existing binary.
 - **execverb** - Exec-dialect KDL verbs + the `passthrough <bin>` funnel. See [execverb.md](execverb.md); actions: [execverb-actions.md](execverb-actions.md).
 - **verb** - Middleware around every `*cli.Command.Action`.
-- **shell** / **sandbox** - Subprocess exec + seccomp/namespace jail (Linux). See [sandbox](sandbox.md).
+- **shell** / **sandbox** - Subprocess exec + seccomp/namespace jail (Linux), auto-degrading on either denial mode. See [sandbox](sandbox.md).
 - **gittree** - Clean+synced gate for repo-shaped verbs.
 - **repocfg** - Per-repo config file loading under a consumer-chosen filename.
 

@@ -97,12 +97,16 @@ func (r *Runner) execIn(ctx context.Context, dir, bin string, argv ...string) er
 		return cmd
 	}
 	cmd := build()
+	var denial *sandbox.Denial
 	if r.Sandbox != nil {
 		// Linux + not-already-jailed: re-exec through the jail helper; else no-op.
-		sandbox.Wrap(cmd, path, argv, r.Sandbox)
+		denial = sandbox.Wrap(cmd, path, argv, r.Sandbox)
+		defer denial.Close()
 	}
 	runErr := cmd.Run()
-	if sandbox.SetupDenied(cmd, runErr) {
+	// Two denial shapes: the clone refused (child never started) and the child
+	// started but setup was refused pre-exec. Both mean the tool never ran.
+	if sandbox.SetupDenied(cmd, runErr) || (runErr != nil && denial.Fired()) {
 		// The environment denied the jail (restricted shell / container without
 		// userns). Degrade to an unsandboxed run rather than dying. See docs/sandbox.md.
 		r.warnSandboxDenied()
@@ -121,7 +125,7 @@ func (r *Runner) warnSandboxDenied() {
 		if r.Stderr == nil {
 			return
 		}
-		_, _ = fmt.Fprintf(r.Stderr, "umbra: namespace sandbox unavailable here; running tools unsandboxed (set %s=1 to silence). See docs/sandbox.md.\n", sandbox.EnvNoSandbox)
+		_, _ = fmt.Fprintf(r.Stderr, "umbra: namespace sandbox unavailable here; running tools unsandboxed (set %s=1 to skip the retry). See docs/sandbox.md.\n", sandbox.EnvNoSandbox)
 	})
 }
 

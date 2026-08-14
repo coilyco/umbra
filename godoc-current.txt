@@ -540,13 +540,26 @@ func SetupDenied(cmd *exec.Cmd, err error) bool
     denial (EPERM/EACCES, child never ran), so the caller may retry it.
     See docs/sandbox.md.
 
-func Wrap(cmd *exec.Cmd, realPath string, argv []string, spec *Spec)
+
+TYPES
+
+type Denial struct {
+	// Has unexported fields.
+}
+    Denial is the parent half of the setup-denied channel. Fired reports whether
+    the jail child signalled "setup denied, target never ran". Nil is safe.
+
+func Wrap(cmd *exec.Cmd, realPath string, argv []string, spec *Spec) *Denial
     Wrap rewrites cmd to re-exec the consumer binary as the jail helper in a
     fresh user+mount namespace. No-op when jailed, opted out (EnvNoSandbox),
     or spec nil.
 
+func (d *Denial) Close()
+    Close releases both ends. Safe on a nil Denial and safe to call twice.
 
-TYPES
+func (d *Denial) Fired() bool
+    Fired reports whether the jail child signalled a denial. It drops the
+    parent's write end first, so a silent child reads EOF instead of blocking.
 
 type Spec struct {
 	// SelfExe is the consumer binary path, re-execed as the jail helper and

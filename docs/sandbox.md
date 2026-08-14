@@ -24,26 +24,47 @@ Without handling, every sandboxed verb dies in these environments - even though
 the environment is *already* an isolation boundary (a container) or one where the
 jail adds little.
 
-## Two escapes
+## Auto-degrade covers both denial modes
 
-**Auto-degrade (mode 1).** When a jailed child fails to *start* with `EPERM`/
-`EACCES` (`sandbox.SetupDenied`), `shell.Runner` retries the command unsandboxed
-and warns once. The child never ran, so the retry is side-effect-safe. A
-started-then-failed run is a real tool error and is never degraded.
+An environment that cannot host the jail degrades to an unsandboxed run on its
+own. No consumer needs to declare anything for umbra to work.
 
-**Opt-out env (both modes).** Set **`CLIGUARD_NO_SANDBOX=1`** (also `true`/`yes`/
-`on`) and `Wrap` no-ops up front - tools run directly. Use it where the namespace
-jail is redundant or always-denied, e.g. `ward container`'s entrypoint exports it
-because the container itself is the boundary, which also unblocks the in-container
-reaper (mode 2, which auto-degrade does not catch).
+**Mode 1, clone denied.** The jailed child never starts: `cmd.Run` returns
+`EPERM`/`EACCES` with a nil `ProcessState`, `sandbox.SetupDenied` reports it, and
+`shell.Runner` retries unsandboxed.
+
+**Mode 2, setup denied inside the child.** The namespace is created and the child
+starts, then a mount, capability, or seccomp step is refused. Because the child
+ran, `ProcessState` is non-nil and `SetupDenied` cannot see it. The child instead
+reports the refusal on a sentinel fd that `Wrap` attaches through `ExtraFiles`,
+and `shell.Runner` takes the same retry path.
+
+Both retries are side-effect-safe by construction: every setup step runs before
+`execJailTarget`, the last statement in the jail helper, so an error means the
+wrapped tool never ran and the retry cannot double an effect.
+
+Only `EPERM`/`EACCES` degrade. A malformed spec, a missing path, or a read-only
+filesystem still fails loudly rather than silently dropping the boundary. The
+sentinel is marked close-on-exec before the target is exec'd, so a wrapped tool
+cannot inherit the fd and forge a denial.
+
+## The opt-out env is optional
+
+`CLIGUARD_NO_SANDBOX=1` (also `true`/`yes`/`on`) makes `Wrap` no-op up front. It
+is a **deterministic opt-out with no per-exec retry cost**, not a correctness
+requirement - auto-degrade now covers the cases that used to need it.
+
+Reach for it only where the jail is redundant by design and you want to skip the
+retry entirely, e.g. `ward container`'s entrypoint, where the container itself is
+the boundary.
 
 ## Choosing
 
-- In a **container** that is already the isolation boundary: set
-  `CLIGUARD_NO_SANDBOX=1` (deterministic, no per-exec retry, covers both modes).
-- In a **restricted shell** where you still want the jail when available: rely on
-  auto-degrade - it sandboxes when it can and falls back when it can't.
-- On a normal host: leave both unset; the jail applies.
+- On a normal host: leave it unset; the jail applies.
+- Anywhere the jail may be denied: leave it unset; auto-degrade handles it and
+  warns once.
+- In a **container that is already the isolation boundary**, if you want to skip
+  the per-exec retry: set `CLIGUARD_NO_SANDBOX=1`.
 
 ## See also
 

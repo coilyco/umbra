@@ -20,11 +20,52 @@ import (
 const jailArgv0 = "__jail"
 const jailStashPath = "/tmp/.cliguard-jail"
 
+// jailSentinelByte is what the child writes to its ExtraFiles pipe when jail
+// setup is denied. A dedicated fd cannot be forged by a wrapped tool's exit code.
+const jailSentinelByte = 'D'
+
+// jailSentinelFD is where Wrap's ExtraFiles entry lands in the child.
+const jailSentinelFD = 3
+
+// Denial is the parent half of the setup-denied channel. Fired reports whether
+// the jail child signalled "setup denied, target never ran". Nil is safe.
+type Denial struct{ r, w *os.File }
+
+// Fired reports whether the jail child signalled a denial. It drops the
+// parent's write end first, so a silent child reads EOF instead of blocking.
+func (d *Denial) Fired() bool {
+	if d == nil || d.r == nil {
+		return false
+	}
+	if d.w != nil {
+		_ = d.w.Close()
+		d.w = nil
+	}
+	buf := make([]byte, 1)
+	n, err := d.r.Read(buf)
+	return err == nil && n == 1 && buf[0] == jailSentinelByte
+}
+
+// Close releases both ends. Safe on a nil Denial and safe to call twice.
+func (d *Denial) Close() {
+	if d == nil {
+		return
+	}
+	if d.w != nil {
+		_ = d.w.Close()
+		d.w = nil
+	}
+	if d.r != nil {
+		_ = d.r.Close()
+		d.r = nil
+	}
+}
+
 // Wrap rewrites cmd to re-exec the consumer binary as the jail helper in a fresh
 // user+mount namespace. No-op when jailed, opted out (EnvNoSandbox), or spec nil.
-func Wrap(cmd *exec.Cmd, realPath string, argv []string, spec *Spec) {
+func Wrap(cmd *exec.Cmd, realPath string, argv []string, spec *Spec) *Denial {
 	if spec == nil || spec.SelfExe == "" || Jailed() || NoSandbox() {
-		return
+		return nil
 	}
 	execTool := filepath.Base(realPath)
 	tools := withTool(spec.Tools, execTool)
@@ -39,6 +80,15 @@ func Wrap(cmd *exec.Cmd, realPath string, argv []string, spec *Spec) {
 	cmd.Path = spec.SelfExe
 	cmd.Args = append([]string{spec.SelfExe}, helper...)
 	cmd.SysProcAttr = jailSysProcAttr()
+
+	// The child reports a mode-2 denial (namespace made, setup refused) here.
+	// Without it the child has already run, so SetupDenied cannot see the case.
+	r, w, err := os.Pipe()
+	if err != nil {
+		return nil // no channel; mode-1 detection still applies
+	}
+	cmd.ExtraFiles = append(cmd.ExtraFiles, w)
+	return &Denial{r: r, w: w}
 }
 
 // withTool returns tools guaranteed to contain t.
@@ -88,31 +138,84 @@ func RunJail(args []string) error {
 	// Pin this OS thread: the thread that installs the non-TSYNC seccomp filter
 	// must be the one that execs, which collapses the other Go threads.
 	runtime.LockOSThread()
+	// Close the sentinel on exec so the wrapped tool never inherits it and
+	// cannot write a denial after we hand the process image over.
+	sealSentinel()
 
-	tools, execTool, rest, err := parseJailArgs(args)
+	execTool, rest, err := jailSetup(args)
 	if err != nil {
-		return err
-	}
-	if execTool == "" {
-		return fmt.Errorf("sandbox: jail missing --exec target")
-	}
-	resolvedTools := resolveTools(tools)
-	if err := prepareJailMounts(resolvedTools); err != nil {
-		return err
-	}
-	if err := installToolShims(resolvedTools, spec().SelfExe); err != nil {
-		return err
-	}
-	if err := setJailEnvironment(); err != nil {
-		return err
-	}
-	if err := clearAmbientCaps(); err != nil {
-		return err
-	}
-	if err := lockdownSyscalls(); err != nil {
+		// Every step below runs before execJailTarget, so the target has not
+		// run. A permission denial is the environment refusing, not a bug.
+		if isSetupDenial(err) {
+			signalSetupDenied()
+		}
 		return err
 	}
 	return execJailTarget(execTool, rest)
+}
+
+// jailSetup performs every pre-exec step. It returns the target to exec, so by
+// construction any error here means the wrapped tool never ran.
+func jailSetup(args []string) (execTool string, rest []string, err error) {
+	tools, execTool, rest, err := parseJailArgs(args)
+	if err != nil {
+		return "", nil, err
+	}
+	if execTool == "" {
+		return "", nil, fmt.Errorf("sandbox: jail missing --exec target")
+	}
+	resolvedTools := resolveTools(tools)
+	if err := prepareJailMounts(resolvedTools); err != nil {
+		return "", nil, err
+	}
+	if err := installToolShims(resolvedTools, spec().SelfExe); err != nil {
+		return "", nil, err
+	}
+	if err := setJailEnvironment(); err != nil {
+		return "", nil, err
+	}
+	if err := clearAmbientCaps(); err != nil {
+		return "", nil, err
+	}
+	if err := lockdownSyscalls(); err != nil {
+		return "", nil, err
+	}
+	return execTool, rest, nil
+}
+
+// isSetupDenial reports whether err is the environment refusing the jail
+// (EPERM/EACCES) rather than a malformed spec or a missing path, which must
+// still fail loudly instead of silently dropping the boundary.
+func isSetupDenial(err error) bool {
+	return errors.Is(err, syscall.EPERM) || errors.Is(err, syscall.EACCES)
+}
+
+// sentinelFile returns the ExtraFiles sentinel the parent attached, or nil when
+// the child was started without one (a consumer calling RunJail directly).
+func sentinelFile() *os.File {
+	if _, err := unix.FcntlInt(uintptr(jailSentinelFD), unix.F_GETFD, 0); err != nil {
+		return nil
+	}
+	return os.NewFile(jailSentinelFD, "umbra-jail-sentinel")
+}
+
+// sealSentinel marks the sentinel close-on-exec. Without this the wrapped tool
+// inherits the fd and could forge a denial after the boundary is handed over.
+func sealSentinel() {
+	if _, err := unix.FcntlInt(uintptr(jailSentinelFD), unix.F_GETFD, 0); err != nil {
+		return
+	}
+	_, _ = unix.FcntlInt(uintptr(jailSentinelFD), unix.F_SETFD, unix.FD_CLOEXEC)
+}
+
+// signalSetupDenied tells the parent the jail was refused before exec. Failure
+// to signal is not fatal: the parent then reports the original error.
+func signalSetupDenied() {
+	f := sentinelFile()
+	if f == nil {
+		return
+	}
+	_, _ = f.Write([]byte{jailSentinelByte})
 }
 
 type resolvedTool struct {
