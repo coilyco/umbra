@@ -3,6 +3,7 @@ package opcore
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 
 	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
@@ -39,21 +40,40 @@ func parseBodyMapping(n *kdl.Node) (BodyMapping, error) {
 		return BodyMapping{}, fmt.Errorf("`map` expects one non-empty string source path")
 	}
 	if n.Children() != nil && len(n.Children().Nodes) > 0 {
-		return BodyMapping{}, fmt.Errorf("`map` cannot have child nodes (fail-closed)")
+		return BodyMapping{}, fmt.Errorf("`map` cannot have child nodes: %s", mappedStringLimit)
 	}
 	props := n.Properties()
-	if len(props) != 1 {
-		return BodyMapping{}, fmt.Errorf("`map` needs exactly one `to=\"...\"` property")
-	}
 	to, exists := props["to"]
 	if !exists {
 		return BodyMapping{}, fmt.Errorf("`map` needs a `to=\"...\"` property")
+	}
+	if extra := extraMapProps(props); len(extra) > 0 {
+		return BodyMapping{}, fmt.Errorf("`map` takes only `to=\"...\"`, not %s: %s",
+			strings.Join(extra, ", "), mappedStringLimit)
 	}
 	target, ok := to.RawValue().(string)
 	if !ok || target == "" {
 		return BodyMapping{}, fmt.Errorf("`map` needs a non-empty string target")
 	}
 	return BodyMapping{SourcePath: strings.Split(raw, "."), Target: target}, nil
+}
+
+// mappedStringLimit names the limit behind every shape a `map` refuses. An
+// author reaching for one wants a non-string leaf, which mapped bodies cannot
+// carry. See docs/specverb-request.md.
+const mappedStringLimit = "a mapped leaf projects a string, so it cannot declare a type or a nested shape (umbra#312)"
+
+// extraMapProps lists the properties beside `to`, sorted so the message is
+// stable.
+func extraMapProps(props map[string]kdl.Value) []string {
+	var extra []string
+	for name := range props {
+		if name != "to" {
+			extra = append(extra, name)
+		}
+	}
+	sort.Strings(extra)
+	return extra
 }
 
 func validateBodyMappings(mappings []BodyMapping) error {

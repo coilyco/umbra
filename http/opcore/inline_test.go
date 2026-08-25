@@ -732,3 +732,48 @@ func TestParseInlineFailClosedCases(t *testing.T) {
 		}
 	}
 }
+
+// A shape written onto a `map` is refused with the limit named, so the common
+// authoring mistake is a build error rather than an upstream 400 at call time.
+// See umbra#312.
+func TestMapShapeRefusalNamesTheStringLimit(t *testing.T) {
+	cases := map[string]string{
+		"declared type":   `map "a" to="text" type="object"`,
+		"declared format": `map "a" to="text" format="json"`,
+		"nested shape":    `map "a" to="text" { field "b" type="string" }`,
+	}
+	for name, body := range cases {
+		t.Run(name, func(t *testing.T) {
+			src := `wrap x {
+                auth bearer { value env "T" }
+                can create message { path "/messages"; body { ` + body + ` } }
+            }`
+			_, _, err := opcore.ParseInline([]byte(src))
+			if err == nil {
+				t.Fatal("a shape on a mapped leaf must fail closed")
+			}
+			if !strings.Contains(err.Error(), "projects a string") {
+				t.Errorf("the refusal must name the limit, got: %v", err)
+			}
+			if !strings.Contains(err.Error(), "umbra#312") {
+				t.Errorf("the refusal should point at the issue that explains it, got: %v", err)
+			}
+		})
+	}
+}
+
+// A missing target is a different mistake and keeps its own message, so the
+// limit is not named where it is not the cause.
+func TestMapMissingTargetKeepsItsOwnMessage(t *testing.T) {
+	src := `wrap x {
+        auth bearer { value env "T" }
+        can create message { path "/messages"; body { map "a" } }
+    }`
+	_, _, err := opcore.ParseInline([]byte(src))
+	if err == nil {
+		t.Fatal("a mapping with no target must fail closed")
+	}
+	if strings.Contains(err.Error(), "projects a string") {
+		t.Errorf("a missing target is not the string limit, got: %v", err)
+	}
+}

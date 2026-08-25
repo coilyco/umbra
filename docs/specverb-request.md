@@ -9,6 +9,16 @@ How the generic action behind every mounted leaf assembles, previews, and fires 
 
 A local input shadowing a reserved engine flag (`--dry-run`, `--query`, `--output`, `--body-file`), or a query/body collision on one leaf, refuses to build rather than shadowing silently.
 
+## A mapped body projects strings, and only strings
+
+A `body` block written as `map "source.path" to="target"` puts a **string** on the wire at every mapped leaf, whatever the caller supplies. The projected value comes from `mappedString`, so an upstream requiring an object, number, or boolean at a mapped parameter is unreachable through `map` in every configuration.
+
+Nothing surfaces this at authoring time. A guardfile mapping a parameter the upstream wants as an object parses, builds, ships, registers its tool, and then fails on every call with the upstream's own error. Measured against Exa's `/search`, varying one parameter: absent is 200, `contents={"text": true}` is 200, and `contents="text"` is **HTTP 400** with `expected object, received string`. That 400 is the first and only notice, and it arrives in production against a metered API.
+
+It is easy to reach without choosing it. `map` is the only construct that renames an input to a different upstream key, because a body field carrying an upstream alias is refused outright. So a guardfile whose upstream needs a parameter name colliding with a reserved engine flag is forced into mapped-body mode for that leaf, and mapped-body mode then forbids every non-string value on that leaf, including parameters unrelated to the collision that forced it. **Neither rule states the combination, and an author reading either alone would not predict it.**
+
+Writing a shape onto a `map` is refused at parse time with the limit named, so the common mistake is a build error rather than a runtime 400. Typed mapped leaves are the real fix and are not built: `BodyMapping` would need a declared type and `projectMappedBody` a typed accessor. See coilyco-flight-deck/umbra#312.
+
 ## The shell-metachar gate is location-aware
 
 `verb.Wrap` → `policy.ValidateArg` refuses shell metacharacters, but only on inputs composing into the request **URL**, the injection surface. Path params and query flags stay gated, each element of a repeated parameter independently. Body and form fields and `--body-file` are encoded into the body and never reach a shell or the URL, so they are exempt: gating them mangled legitimate free text.
