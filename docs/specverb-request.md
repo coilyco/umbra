@@ -9,15 +9,26 @@ How the generic action behind every mounted leaf assembles, previews, and fires 
 
 A local input shadowing a reserved engine flag (`--dry-run`, `--query`, `--output`, `--body-file`), or a query/body collision on one leaf, refuses to build rather than shadowing silently.
 
-## A mapped body projects strings, and only strings
+## A mapped body carries a declared type
 
-A `body` block written as `map "source.path" to="target"` puts a **string** on the wire at every mapped leaf, whatever the caller supplies. The projected value comes from `mappedString`, so an upstream requiring an object, number, or boolean at a mapped parameter is unreachable through `map` in every configuration.
+A `body` block written as `map "source.path" to="target"` projects a **string** unless the mapping says otherwise. `type=` declares what reaches the wire, and `items=` the element type of an array:
 
-Nothing surfaces this at authoring time. A guardfile mapping a parameter the upstream wants as an object parses, builds, ships, registers its tool, and then fails on every call with the upstream's own error. Measured against Exa's `/search`, varying one parameter: absent is 200, `contents={"text": true}` is 200, and `contents="text"` is **HTTP 400** with `expected object, received string`. That 400 is the first and only notice, and it arrives in production against a metered API.
+```kdl
+body {
+    map "search_text" to="query"
+    map "contents"    to="contents"       type="object"
+    map "limit"       to="numResults"     type="integer"
+    map "domains"     to="includeDomains" type="array" items="string"
+}
+```
 
-It is easy to reach without choosing it. `map` is the only construct that renames an input to a different upstream key, because a body field carrying an upstream alias is refused outright. So a guardfile whose upstream needs a parameter name colliding with a reserved engine flag is forced into mapped-body mode for that leaf, and mapped-body mode then forbids every non-string value on that leaf, including parameters unrelated to the collision that forced it. **Neither rule states the combination, and an author reading either alone would not predict it.**
+Supported types are string, integer, number, boolean, object, and array. An `items` of `any` takes each element as supplied, the union rule an empty swagger `items` schema implies. The declared type reaches the model-facing schema too, so the tool says what the wire will carry rather than always saying string.
 
-Writing a shape onto a `map` is refused at parse time with the limit named, so the common mistake is a build error rather than a runtime 400. Typed mapped leaves are the real fix and are not built: `BodyMapping` would need a declared type and `projectMappedBody` a typed accessor. See coilyco-flight-deck/umbra#312.
+**A caller supplying the wrong shape is refused before the request fires**, which is the point. A mapped leaf used to project a string in every configuration, so an upstream wanting an object at a mapped parameter was unreachable and every call was its 400. Measured against Exa's `/search`: absent is 200, `contents={"text": true}` is 200, and `contents="text"` is **HTTP 400** with `expected object, received string`. That 400 was the first and only notice, and it arrived in production against a metered API.
+
+The limit was easy to reach without choosing it. `map` is the only construct that renames an input to a different upstream key, because a body field carrying an upstream alias is refused outright. So a guardfile whose upstream needs a parameter name colliding with a reserved engine flag was forced into mapped-body mode for that leaf, and mapped-body mode then forbade every non-string value on that leaf, including parameters unrelated to the collision that forced it. **Neither rule stated the combination, and an author reading either alone would not predict it.** That is closed: the mode no longer restricts the type.
+
+An unsupported type, an `items` outside an array, and an unknown property all fail at parse time. See coilyco-flight-deck/umbra#312.
 
 ## The shell-metachar gate is location-aware
 

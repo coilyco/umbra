@@ -253,8 +253,8 @@ func TestParseInlineBodyMappings(t *testing.T) {
 	descs, _ := parseInline(t, mappedInlineSrc)
 	got := descByLeaf(t, descs, "create").BodyMappings
 	want := []opcore.BodyMapping{
-		{SourcePath: []string{"commonAnnotations", "summary"}, Target: "text"},
-		{SourcePath: []string{"commonLabels", "alertname"}, Target: "alert_name"},
+		{SourcePath: []string{"commonAnnotations", "summary"}, Target: "text", Type: "string"},
+		{SourcePath: []string{"commonLabels", "alertname"}, Target: "alert_name", Type: "string"},
 	}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("body mappings = %#v, want %#v", got, want)
@@ -733,14 +733,41 @@ func TestParseInlineFailClosedCases(t *testing.T) {
 	}
 }
 
-// A shape written onto a `map` is refused with the limit named, so the common
-// authoring mistake is a build error rather than an upstream 400 at call time.
-// See umbra#312.
-func TestMapShapeRefusalNamesTheStringLimit(t *testing.T) {
+// A mapped leaf carries its declared type onto the wire. Before umbra#312 it
+// projected a string in every configuration.
+func TestMapCarriesADeclaredType(t *testing.T) {
+	cases := map[string]struct{ body, wantType, wantItems string }{
+		"object":        {`map "a" to="text" type="object"`, "object", ""},
+		"integer":       {`map "a" to="text" type="integer"`, "integer", ""},
+		"boolean":       {`map "a" to="text" type="boolean"`, "boolean", ""},
+		"array":         {`map "a" to="text" type="array"`, "array", "string"},
+		"typed array":   {`map "a" to="text" type="array" items="integer"`, "array", "integer"},
+		"absent is str": {`map "a" to="text"`, "string", ""},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			src := `wrap x {
+                auth bearer { value env "T" }
+                can create message { path "/messages"; body { ` + tc.body + ` } }
+            }`
+			descs, _ := parseInline(t, src)
+			got := descByLeaf(t, descs, "create").BodyMappings[0]
+			if got.Type != tc.wantType || got.Items != tc.wantItems {
+				t.Errorf("Type/Items = %q/%q, want %q/%q", got.Type, got.Items, tc.wantType, tc.wantItems)
+			}
+		})
+	}
+}
+
+// The type is a closed set and items belongs to an array, so a typo is a build
+// error rather than a shape nobody notices until the upstream refuses it.
+func TestMapTypeFailsClosed(t *testing.T) {
 	cases := map[string]string{
-		"declared type":   `map "a" to="text" type="object"`,
-		"declared format": `map "a" to="text" format="json"`,
-		"nested shape":    `map "a" to="text" { field "b" type="string" }`,
+		"unknown type":      `map "a" to="text" type="objekt"`,
+		"unknown items":     `map "a" to="text" type="array" items="objekt"`,
+		"items without arr": `map "a" to="text" type="string" items="integer"`,
+		"unknown property":  `map "a" to="text" format="json"`,
+		"nested shape":      `map "a" to="text" { field "b" type="string" }`,
 	}
 	for name, body := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -748,15 +775,8 @@ func TestMapShapeRefusalNamesTheStringLimit(t *testing.T) {
                 auth bearer { value env "T" }
                 can create message { path "/messages"; body { ` + body + ` } }
             }`
-			_, _, err := opcore.ParseInline([]byte(src))
-			if err == nil {
-				t.Fatal("a shape on a mapped leaf must fail closed")
-			}
-			if !strings.Contains(err.Error(), "projects a string") {
-				t.Errorf("the refusal must name the limit, got: %v", err)
-			}
-			if !strings.Contains(err.Error(), "umbra#312") {
-				t.Errorf("the refusal should point at the issue that explains it, got: %v", err)
+			if _, _, err := opcore.ParseInline([]byte(src)); err == nil {
+				t.Fatal("expected a fail-closed parse error")
 			}
 		})
 	}

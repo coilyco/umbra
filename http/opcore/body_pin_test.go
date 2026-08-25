@@ -238,3 +238,73 @@ func TestInlinePinnedObjectFailsClosed(t *testing.T) {
 		})
 	}
 }
+
+// The Exa case umbra#312 measured: `contents` wants an object, and a mapped
+// leaf could only ever send a string, so every call was an upstream 400.
+func TestMappedBodyCarriesADeclaredNonStringType(t *testing.T) {
+	op, got := bodyEcho(t, opcore.Descriptor{
+		Method: http.MethodPost,
+		Path:   "/search",
+		Leaf:   "search",
+		BodyMappings: []opcore.BodyMapping{
+			{SourcePath: []string{"search_text"}, Target: "query", Type: "string"},
+			{SourcePath: []string{"contents"}, Target: "contents", Type: "object"},
+			{SourcePath: []string{"limit"}, Target: "numResults", Type: "integer"},
+			{SourcePath: []string{"live"}, Target: "livecrawl", Type: "boolean"},
+			{SourcePath: []string{"domains"}, Target: "includeDomains", Type: "array", Items: "string"},
+		},
+	})
+	if _, err := op.Execute(context.Background(), opcore.Args{Body: map[string]any{
+		"search_text": "recent umbra releases",
+		"contents":    map[string]any{"text": true},
+		"limit":       float64(10),
+		"live":        true,
+		"domains":     []any{"example.com", "example.org"},
+	}}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	want := map[string]any{
+		"query":          "recent umbra releases",
+		"contents":       map[string]any{"text": true},
+		"numResults":     float64(10),
+		"livecrawl":      true,
+		"includeDomains": []any{"example.com", "example.org"},
+	}
+	if !reflect.DeepEqual(*got, want) {
+		t.Fatalf("outgoing body = %#v, want %#v", *got, want)
+	}
+}
+
+// A caller supplying the wrong shape is refused here rather than by the
+// upstream, which is the whole point: the 400 was the first and only notice.
+func TestMappedBodyRefusesTheWrongShapeWithoutFiring(t *testing.T) {
+	cases := map[string]struct {
+		mapping opcore.BodyMapping
+		value   any
+	}{
+		"object given a string":    {opcore.BodyMapping{SourcePath: []string{"c"}, Target: "c", Type: "object"}, "text"},
+		"integer given a string":   {opcore.BodyMapping{SourcePath: []string{"c"}, Target: "c", Type: "integer"}, "10"},
+		"integer given a fraction": {opcore.BodyMapping{SourcePath: []string{"c"}, Target: "c", Type: "integer"}, 1.5},
+		"boolean given a string":   {opcore.BodyMapping{SourcePath: []string{"c"}, Target: "c", Type: "boolean"}, "true"},
+		"array given an object":    {opcore.BodyMapping{SourcePath: []string{"c"}, Target: "c", Type: "array", Items: "string"}, map[string]any{}},
+		"array element mistyped":   {opcore.BodyMapping{SourcePath: []string{"c"}, Target: "c", Type: "array", Items: "integer"}, []any{"nope"}},
+		"string given an object":   {opcore.BodyMapping{SourcePath: []string{"c"}, Target: "c", Type: "string"}, map[string]any{}},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			calls := 0
+			upstream := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { calls++ }))
+			defer upstream.Close()
+			op := &opcore.Operation{
+				Desc: opcore.Descriptor{Method: http.MethodPost, Path: "/search", Leaf: "search", BodyMappings: []opcore.BodyMapping{tc.mapping}},
+				RT:   opcore.NewRuntime(opcore.RuntimeConfig{BaseURL: upstream.URL}),
+			}
+			if _, err := op.Execute(context.Background(), opcore.Args{Body: map[string]any{"c": tc.value}}); err == nil {
+				t.Fatal("a mistyped mapped value must be refused")
+			}
+			if calls != 0 {
+				t.Errorf("upstream was called %d times; the refusal must happen before the request", calls)
+			}
+		})
+	}
+}

@@ -15,7 +15,7 @@ type Descriptor struct {
 	Path           string         // path template, e.g. /repos/{owner}/{repo}
 	PathParams     []string       // ordered positional args drawn from the path
 	BodyFlags      []Field        // request-body fields, including nested object/array shapes
-	BodyMappings   []BodyMapping  // required string input paths projected onto fresh top-level body keys
+	BodyMappings   []BodyMapping  // required input paths projected onto fresh top-level body keys
 	QueryFlags     []Field        // query params, including typed scalar-array shapes
 	QueryExclusive [][]string     // local query-name groups where at most one may be supplied
 	FormFlags      []Field        // formData params, where "file" types take a path
@@ -40,6 +40,11 @@ type Descriptor struct {
 type BodyMapping struct {
 	SourcePath []string
 	Target     string
+	// Type is the JSON type the leaf projects, defaulting to string. A mapped
+	// leaf used to be string-only in every configuration. See umbra#312.
+	Type string
+	// Items is the element type when Type is "array".
+	Items string
 }
 
 // Label names the leaf in operator-facing errors, satisfying stepflow.Leaf so a
