@@ -6,6 +6,7 @@ package stepflow
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -123,8 +124,12 @@ func ResolveArg(value string, inputs map[string]string, bindings map[string]any)
 	if v, ok := inputs[ref]; ok {
 		return v, nil
 	}
-	return "", fmt.Errorf("$%s is not set (an optional input that was not supplied)", ref)
+	return "", fmt.Errorf("$%s: %w", ref, ErrUnsetOptional)
 }
+
+// ErrUnsetOptional reports a `$name` naming an input the caller omitted. Build
+// validation rejects an undeclared ref, so a caller may drop the arg. #326.
+var ErrUnsetOptional = errors.New("optional input was not supplied")
 
 // ResolveArgDry resolves an argument for a dry-run plan. Unavailable step
 // output is left as a `${ref}` placeholder.
@@ -139,6 +144,20 @@ func ResolveArgDry(value string, inputs map[string]string) string {
 		}
 	}
 	return "${" + ref + "}"
+}
+
+// UnsetInputRef reports whether value is a bare `$name` naming an input the
+// caller did not supply, so a dry plan can drop it exactly as a live call does.
+func UnsetInputRef(value string, inputs map[string]string) bool {
+	if !strings.HasPrefix(value, "$") {
+		return false
+	}
+	ref := strings.TrimPrefix(value, "$")
+	if strings.Contains(ref, ".") {
+		return false
+	}
+	_, ok := inputs[ref]
+	return !ok
 }
 
 // CondScope merges coerced inputs with completed step bindings. A binding wins

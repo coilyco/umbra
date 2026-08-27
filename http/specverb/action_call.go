@@ -185,7 +185,12 @@ func (rt *runtime) fireCallAudited(ctx context.Context, leaf opDescriptor, metho
 
 // renderCallActionPlan prints the planned call sequence without firing it.
 func (rt *runtime) renderCallActionPlan(ctx context.Context, c *cli.Command, ad actionDescriptor, strVars map[string]string, sliceVars map[string][]string) error {
-	resolve := func(v string) (string, error) { return stepflow.ResolveArgDry(v, strVars), nil }
+	resolve := func(v string) (string, error) {
+		if stepflow.UnsetInputRef(v, strVars) {
+			return "", stepflow.ErrUnsetOptional
+		}
+		return stepflow.ResolveArgDry(v, strVars), nil
+	}
 	plan, err := stepflow.PlanCalls(ctx, ad.Calls, resolve, stepflow.SliceRefs(sliceVars), rt.stepRun)
 	if err != nil {
 		return err

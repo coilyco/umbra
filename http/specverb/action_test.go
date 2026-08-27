@@ -599,3 +599,83 @@ func TestActionInputMatchesRefusesANearMiss(t *testing.T) {
 		}
 	}
 }
+
+// optionalArgGuardfile shadows `create issue` the way agentic-os#1105 wants to:
+// required inputs plus optional ones the caller usually omits.
+func optionalArgGuardfile(t *testing.T) *guardfile.Guardfile {
+	t.Helper()
+	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
+		spec forgejo.swagger.v1.json
+		base-url "https://forgejo.coilysiren.me/api/v1"
+		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
+		can create issue { op "issueCreateIssue" }
+		action create issue {
+			describe "File an issue, carrying the leaf's optional fields."
+			input repo      { positional; required; help "owner/name" }
+			input title     { flag; required; help "issue title" }
+			input body      { flag; help "issue body" }
+			input milestone { flag; help "milestone id" }
+			call create issue {
+				args { owner-repo $repo; title $title; body $body; milestone $milestone }
+			}
+		}
+	}`))
+	if err != nil {
+		t.Fatalf("parse optional-arg guardfile: %v", err)
+	}
+	return gf
+}
+
+// TestActionOmittedOptionalArgIsDroppedNotFailed: an omitted input leaves its
+// field absent rather than failing the call, so a shadow can carry optionals.
+func TestActionOmittedOptionalArgIsDroppedNotFailed(t *testing.T) {
+	var gotBody string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(r.Body)
+		gotBody = string(b)
+		w.WriteHeader(http.StatusCreated)
+		_, _ = w.Write([]byte(`{"number":1}`))
+	}))
+	defer srv.Close()
+
+	cfg := Config{
+		Guardfile: optionalArgGuardfile(t),
+		Spec:      actionSpec(t),
+		BaseURL:   srv.URL,
+		Providers: map[string]Provider{"ssm": func(context.Context, string) (string, error) { return "x", nil }},
+	}
+	if _, err := runTree(t, cfg, "forgejo", "issue", "create", "kai/demo",
+		"--title", "t", "--output", "json"); err != nil {
+		t.Fatalf("omitting an optional flag must not fail the call: %v", err)
+	}
+	var body map[string]any
+	if err := json.Unmarshal([]byte(gotBody), &body); err != nil {
+		t.Fatalf("body is not JSON: %q", gotBody)
+	}
+	if body["title"] != "t" {
+		t.Errorf("the supplied input must still bind, got %q", gotBody)
+	}
+	for _, absent := range []string{"body", "milestone"} {
+		if _, present := body[absent]; present {
+			t.Errorf("omitted %q must be absent, not sent empty or as a placeholder: %q", absent, gotBody)
+		}
+	}
+}
+
+// TestActionOmittedOptionalArgIsDroppedInTheDryPlan keeps the plan honest: no
+// ${placeholder} for something the live call drops.
+func TestActionOmittedOptionalArgIsDroppedInTheDryPlan(t *testing.T) {
+	cfg := Config{
+		Guardfile:  optionalArgGuardfile(t),
+		Spec:       actionSpec(t),
+		HTTPClient: &http.Client{Transport: failingTransport{t}},
+		Providers:  map[string]Provider{"ssm": func(context.Context, string) (string, error) { return "x", nil }},
+	}
+	out, err := runTree(t, cfg, "forgejo", "issue", "create", "kai/demo", "--title", "t", "--dry-run")
+	if err != nil {
+		t.Fatalf("dry run: %v", err)
+	}
+	if strings.Contains(out, "${milestone}") || strings.Contains(out, "${body}") {
+		t.Errorf("the plan must not carry a placeholder for an omitted optional:\n%s", out)
+	}
+}

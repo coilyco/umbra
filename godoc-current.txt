@@ -3009,6 +3009,14 @@ A dialect resolves its authorized leaves into Steps and supplies a Runner;
 stepflow preserves their order and threads explicit `as` bindings between them.
 It deliberately does not attach deployment policy to a sequence.
 
+VARIABLES
+
+var ErrUnsetOptional = errors.New("optional input was not supplied")
+    ErrUnsetOptional reports a `$name` naming an input the caller omitted.
+    Build validation rejects an undeclared ref, so a caller may drop the arg.
+    #326.
+
+
 FUNCTIONS
 
 func CoerceScalar(s string) any
@@ -3037,6 +3045,11 @@ func Run(ctx context.Context, c *cli.Command, steps []Step, strVars map[string]s
 
 func ScalarToString(v any) string
     ScalarToString renders a JMESPath scalar for a later argument.
+
+func UnsetInputRef(value string, inputs map[string]string) bool
+    UnsetInputRef reports whether value is a bare `$name` naming an input the
+    caller did not supply, so a dry plan can drop it exactly as a live call
+    does.
 
 
 TYPES

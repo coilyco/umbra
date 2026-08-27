@@ -6,6 +6,7 @@ package specverb
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"slices"
 	"strconv"
@@ -649,6 +650,9 @@ func (rt *runtime) buildCallRequest(ctx context.Context, dry bool, leaf opDescri
 			}
 		}
 		val, rerr := resolve(arg.Value)
+		if errors.Is(rerr, stepflow.ErrUnsetOptional) {
+			continue
+		}
 		if rerr != nil {
 			return "", "", nil, "", exitcode.New(exitcode.UserError, "user_error",
 				fmt.Errorf("action arg %q: %w", arg.Name, rerr), "supply the input this arg references")
@@ -723,7 +727,7 @@ func resolveArgValue(value string, strVars map[string]string) (string, error) {
 	ref := strings.TrimPrefix(value, "$")
 	v, ok := strVars[ref]
 	if !ok {
-		return "", fmt.Errorf("$%s is not set (it is an optional input that was not supplied)", ref)
+		return "", fmt.Errorf("$%s: %w", ref, stepflow.ErrUnsetOptional)
 	}
 	return v, nil
 }

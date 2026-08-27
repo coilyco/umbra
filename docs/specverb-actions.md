@@ -49,6 +49,23 @@ Globs are `filepath.Match`, matched by the same helper the wrap-level `restrict`
 
 Like `required`, this is enforced while the inputs bind, **before** the request is assembled. That is the whole point: a constraint checked after the response is a report, and the run ends with the hazard absent rather than described.
 
+## An omitted optional input drops its argument
+
+An `input` without `required` may simply not be supplied. The argument bound to
+it is then **left out of the request** rather than failing the call, so a shadow
+can carry the leaf's optional fields without forcing a caller to pass all of
+them. `--dry-run` renders the same shape, so the plan never shows a
+`${placeholder}` for something the live call would drop.
+
+This is safe because it cannot hide a typo: a bare `$name` that no `input`
+declares is rejected at **build** time, so a reference that survives to runtime
+is always a declared input. A `$step.field` reference is unaffected and still
+fails when the step it names is unbound.
+
+Scoped to the spec dialect. An execverb step takes positional argv tokens, where
+dropping one would shift every token after it and silently weaken an `argN`
+guard, so that path is unchanged.
+
 ## `collect`: auto-pagination
 
 A `collect` action walks a granted list leaf page by page, appending every array response until a page returns fewer than the page size, then emits one array bound to `as`. It takes `page-param`, `limit-param`, `default-limit`, and an optional `cache "<ttl>"` served from the on-disk TTL cache. Granted-only, audited per page plus an envelope row, and dry-runnable.
