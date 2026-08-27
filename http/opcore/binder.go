@@ -85,9 +85,41 @@ func (b *ArgBinder) Bind(name, val string) error {
 	case b.queryNames[name] != "":
 		b.Query.Set(b.queryNames[name], val)
 	case b.flagNames[name]:
-		b.BodyObj[name] = val
+		coerced, err := CoerceScalar(b.fields[name].Type, val)
+		if err != nil {
+			return exitcode.New(exitcode.UserError, "user_error",
+				fmt.Errorf("arg %q: %w", name, err), "pass a value matching the type the upstream declares")
+		}
+		b.BodyObj[name] = coerced
 	}
 	return nil
+}
+
+// CoerceScalar lowers one CLI token to the JSON type a body field declares, the
+// scalar sibling of CoerceItems. Unknown or empty types stay strings. #328.
+func CoerceScalar(fieldType, token string) (any, error) {
+	switch fieldType {
+	case "integer":
+		n, err := strconv.ParseInt(token, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("value %q is not an integer", token)
+		}
+		return n, nil
+	case "number":
+		f, err := strconv.ParseFloat(token, 64)
+		if err != nil {
+			return nil, fmt.Errorf("value %q is not a number", token)
+		}
+		return f, nil
+	case "boolean":
+		v, err := strconv.ParseBool(token)
+		if err != nil {
+			return nil, fmt.Errorf("value %q is not a boolean", token)
+		}
+		return v, nil
+	default:
+		return token, nil
+	}
 }
 
 // ItemsAny marks an array whose swagger `items` schema is empty: the spec says

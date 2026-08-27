@@ -1025,6 +1025,11 @@ func CoerceItems(items string, tokens []string) ([]any, error)
     declares. An empty `items` schema (ItemsAny) resolves each token
     independently, because that is the only encoding a both-types spec allows.
 
+func CoerceScalar(fieldType, token string) (any, error)
+    CoerceScalar lowers one CLI token to the JSON type a body field declares,
+    the scalar sibling of CoerceItems. Unknown or empty types stay strings.
+    #328.
+
 func DefaultScheme(baseURL string) string
     DefaultScheme prepends https:// to a base-url that carries no scheme, so a
     Guardfile may write `base-url "host/api/v1"` and rely on TLS by default.

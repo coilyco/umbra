@@ -679,3 +679,52 @@ func TestActionOmittedOptionalArgIsDroppedInTheDryPlan(t *testing.T) {
 		t.Errorf("the plan must not carry a placeholder for an omitted optional:\n%s", out)
 	}
 }
+
+// TestActionScalarArgTakesItsDeclaredType pins #328: a body field declared
+// integer receives a JSON number, not the quoted CLI token.
+func TestActionScalarArgTakesItsDeclaredType(t *testing.T) {
+	var gotBody string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(r.Body)
+		gotBody = string(b)
+		w.WriteHeader(http.StatusCreated)
+		_, _ = w.Write([]byte(`{"number":1}`))
+	}))
+	defer srv.Close()
+
+	cfg := Config{
+		Guardfile: optionalArgGuardfile(t),
+		Spec:      actionSpec(t),
+		BaseURL:   srv.URL,
+		Providers: map[string]Provider{"ssm": func(context.Context, string) (string, error) { return "x", nil }},
+	}
+	if _, err := runTree(t, cfg, "forgejo", "issue", "create", "kai/demo",
+		"--title", "t", "--milestone", "16", "--output", "json"); err != nil {
+		t.Fatalf("typed scalar: %v", err)
+	}
+	var body map[string]any
+	if err := json.Unmarshal([]byte(gotBody), &body); err != nil {
+		t.Fatalf("body is not JSON: %q", gotBody)
+	}
+	if body["milestone"] != float64(16) {
+		t.Errorf("milestone must reach the wire as a number, got %#v (body %q)", body["milestone"], gotBody)
+	}
+}
+
+// TestActionScalarArgRefusesTheWrongType proves it fails closed rather than
+// falling back to a string the upstream would reject or ignore.
+func TestActionScalarArgRefusesTheWrongType(t *testing.T) {
+	cfg := Config{
+		Guardfile:  optionalArgGuardfile(t),
+		Spec:       actionSpec(t),
+		HTTPClient: &http.Client{Transport: failingTransport{t}},
+		Providers:  map[string]Provider{"ssm": func(context.Context, string) (string, error) { return "x", nil }},
+	}
+	_, err := runTree(t, cfg, "forgejo", "issue", "create", "kai/demo", "--title", "t", "--milestone", "soon")
+	if err == nil {
+		t.Fatal("a non-integer milestone must be refused before the write")
+	}
+	if !strings.Contains(err.Error(), "is not an integer") {
+		t.Errorf("want a type refusal, got: %v", err)
+	}
+}

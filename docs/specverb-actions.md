@@ -66,6 +66,12 @@ Scoped to the spec dialect. An execverb step takes positional argv tokens, where
 dropping one would shift every token after it and silently weaken an `argN`
 guard, so that path is unchanged.
 
+A supplied argument takes the **type its body field declares**, the scalar
+sibling of the array rule above: an `integer` field receives a JSON number, and
+a value that does not parse as the declared type is refused rather than sent as
+a string. Path and query values stay raw tokens, because that is what they are
+on the wire.
+
 ## `collect`: auto-pagination
 
 A `collect` action walks a granted list leaf page by page, appending every array response until a page returns fewer than the page size, then emits one array bound to `as`. It takes `page-param`, `limit-param`, `default-limit`, and an optional `cache "<ttl>"` served from the on-disk TTL cache. Granted-only, audited per page plus an envelope row, and dry-runnable.
