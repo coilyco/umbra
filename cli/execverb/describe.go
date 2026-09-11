@@ -19,6 +19,10 @@ type Surface struct {
 	Inspect     bool        `json:"inspect,omitempty"`     // the `allow` inspect-list shape: each grant funnels its own binary, no single Bin
 	Guards      []string    `json:"guards,omitempty"`      // wrap-level guards (the passthrough host gate), applied to every leaf
 	Grants      []GrantInfo `json:"grants"`                // every mounted leaf, in mount order
+
+	// DefaultAllow is the `default-allow` reason, empty when the wrap is closed.
+	// Without it a reader reads the grants as the whole surface.
+	DefaultAllow string `json:"default_allow,omitempty"`
 }
 
 // GrantInfo is one mounted grant: its CLI placement, the real invocation it
@@ -47,6 +51,7 @@ func Describe(gf *Guardfile) *Surface {
 		return describeAllow(gf)
 	}
 	s := &Surface{Group: gf.Group, Description: gf.Description, Bin: gf.Bin, ArgvPrefix: gf.ArgvPrefix}
+	s.DefaultAllow = gf.DefaultAllow.Reason
 	for _, e := range gf.Env {
 		s.Env = append(s.Env, e.Name+" = "+strings.TrimSpace(e.Provider+" "+e.Address))
 	}

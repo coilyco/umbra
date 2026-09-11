@@ -66,5 +66,9 @@ What a replacement does buy is real and worth having: every granted call is vali
 
 ## Limits
 
+Both of these are limits of the closed default rather than of replacements:
+[`default-allow`](execverb-default-allow.md) forwards a pre-verb flag and every
+unnamed verb, so a replacement can name only its boundary.
+
 - **Pre-verb global flags are not mounted.** `git -C /elsewhere status` is refused, because the flag arrives before any grant claims it. Tracked at `teable:coilyco-flight-deck/umbra#7324`.
 - **One tool per binary.** The busybox shape, one binary dispatching on `argv[0]` behind a symlink farm, is not what this builds.

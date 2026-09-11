@@ -45,6 +45,10 @@ type Guardfile struct {
 	// tell policy from an unimplemented feature. See docs/execverb.md.
 	Withheld []WithheldStub
 
+	// DefaultAllow inverts the default: an unnamed verb is forwarded to the
+	// wrapped binary rather than refused. See docs/execverb-default-allow.md.
+	DefaultAllow DefaultAllow
+
 	// Actions are declared ordered call sequences over granted exec leaves. See
 	// docs/execverb.md.
 	Actions []guardfile.Action
@@ -281,10 +285,32 @@ func (gf *Guardfile) validate() error {
 	if gf.Bin == "" {
 		return fmt.Errorf("execverb: `exec <bin>` or `passthrough <bin>` is required")
 	}
-	if len(gf.Grants) == 0 {
+	if err := gf.validateDefaultAllow(); err != nil {
+		return err
+	}
+	if len(gf.Grants) == 0 && !gf.DefaultAllow.Declared {
 		return fmt.Errorf("execverb: no `can run` grants (nothing to mount)")
 	}
 	return gf.resolveOcclusion()
+}
+
+// validateDefaultAllow refuses the shapes with no meaning or two answers.
+// Reasoning: docs/execverb-default-allow.md.
+func (gf *Guardfile) validateDefaultAllow() error {
+	if !gf.DefaultAllow.Declared {
+		return nil
+	}
+	for _, g := range gf.Grants {
+		if g.Wildcard {
+			return fmt.Errorf("execverb: `default-allow` cannot coexist with `can run *`: the funnel already forwards " +
+				"the whole binary, so the declaration would name a default nothing reads (fail-closed)")
+		}
+	}
+	if len(gf.Grants) == 0 && len(gf.Withheld) == 0 {
+		return fmt.Errorf("execverb: `default-allow` names neither a `can run` grant nor a `withhold` stub, " +
+			"which is `passthrough` spelled the long way; declare that instead (fail-closed)")
+	}
+	return nil
 }
 
 // applyNode dispatches one child of the wrap block onto gf.
@@ -325,6 +351,13 @@ func (gf *Guardfile) applyTailNode(n *kdl.Node) error {
 		return nil
 	case "replace":
 		return gf.parseReplace(n)
+	case "default-allow":
+		da, err := parseDefaultAllow(n)
+		if err != nil {
+			return err
+		}
+		gf.DefaultAllow = da
+		return nil
 	case "action":
 		return gf.appendAction(n)
 	case "provider":

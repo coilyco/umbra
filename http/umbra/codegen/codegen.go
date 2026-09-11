@@ -404,14 +404,20 @@ func run() error {
 		execverb.Identify(os.Stdout, gf, Version)
 		return nil
 	}
-	app, err := execverb.BuildReplacement(execverb.Config{Guardfile: gf, Wrap: wrapWith(w), Providers: providerRegistry(){{if .HasEmbeds}}, EmbeddedFiles: embeddedFiles[0]{{end}}})
+	cfg := execverb.Config{Guardfile: gf, Wrap: wrapWith(w), Providers: providerRegistry(){{if .HasEmbeds}}, EmbeddedFiles: embeddedFiles[0]{{end}}}
+	app, err := execverb.BuildReplacement(cfg)
 	if err != nil {
 		return err
 	}
-	app.OnUsageError = func(_ context.Context, _ *cli.Command, err error, _ bool) error {
-		return execverb.RefuseRootFlag(gf, err)
+	// nil unless the guardfile declares default-allow, and nil is the refusal.
+	fb, err := execverb.NewFallback(cfg)
+	if err != nil {
+		return err
 	}
-	execverb.InstallRefusal(app, gf)
+	app.OnUsageError = func(ctx context.Context, _ *cli.Command, err error, _ bool) error {
+		return execverb.RootFlagFallback(ctx, gf, fb, err)
+	}
+	execverb.InstallFallback(app, gf, fb)
 	return app.Run(context.Background(), os.Args)
 }
 {{else}}func run() error {

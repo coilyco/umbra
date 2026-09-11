@@ -437,9 +437,10 @@ func TestRenderParamsReplacementIsTheToolItself(t *testing.T) {
 	src := string(out)
 	for _, want := range []string{
 		"execverb.BuildReplacement",
-		"execverb.InstallRefusal",
+		"execverb.InstallFallback",
 		"execverb.IdentifyEnv",
-		"execverb.RefuseRootFlag",
+		"execverb.RootFlagFallback",
+		"execverb.NewFallback",
 	} {
 		if !strings.Contains(src, want) {
 			t.Errorf("replacement source missing %q", want)

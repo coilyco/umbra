@@ -26,6 +26,10 @@ func Identify(w *os.File, gf *Guardfile, version string)
     Identify writes what stands in the wrapped tool's place, the only surface
     that says umbra is here.
 
+func InstallFallback(root *cli.Command, gf *Guardfile, fb *Fallback)
+    InstallFallback sets what happens to an unmounted name: forwarded under
+    default-allow, refused otherwise. Every group, not just the root.
+
 func InstallRefusal(root *cli.Command, gf *Guardfile)
     InstallRefusal sets the refusal on root and every group under it: urfave
     resolves a subcommand against the group that owns it.
@@ -52,6 +56,10 @@ func ResolveReal(bin string) (string, error)
 func ResolveRealExcluding(bin, excludeDir string) (string, error)
     ResolveRealExcluding answers the doctor's question from outside the wrapper:
     given this shim directory, which binary would the shim reach?
+
+func RootFlagFallback(ctx context.Context, gf *Guardfile, fb *Fallback, err error) error
+    RootFlagFallback answers a flag the root does not define: forwarded under
+    default-allow, since a pre-verb flag is part of the unnamed surface.
 
 
 TYPES
@@ -89,6 +97,13 @@ type Config struct {
 }
     Config is everything the engine needs to build a command tree.
 
+type DefaultAllow struct {
+	Declared bool
+	Reason   string
+}
+    DefaultAllow is the parsed `default-allow` declaration: an unnamed verb is
+    forwarded to the real binary rather than refused. Reason is required.
+
 type EmbeddedArg struct {
 	Index  int
 	Source string
@@ -104,6 +119,23 @@ type EnvVar struct {
     EnvVar is one `env` injection: an environment variable set on the
     wrapped process, its value resolved at exec time through a provider.
     See docs/execverb.md.
+
+type Fallback struct {
+	// Has unexported fields.
+}
+    Fallback forwards an unmatched call to the real binary. Not a hole: the
+    wrap-level guards and env injections a granted leaf faces apply here too.
+
+func NewFallback(cfg Config) (*Fallback, error)
+    NewFallback builds the forwarder. A guardfile declaring no default-allow
+    yields a closed one, which refuses.
+
+func (f *Fallback) Forward(ctx context.Context, argv []string) error
+    Forward runs argv against the real binary. argv is the caller's, minus the
+    program name: a replacement is the tool, so its argv is the tool's argv.
+
+func (f *Fallback) Open() bool
+    Open reports whether this fallback forwards. A closed one refuses.
 
 type FlagPin struct {
 	Flag  string
@@ -214,6 +246,10 @@ type Guardfile struct {
 	// tell policy from an unimplemented feature. See docs/execverb.md.
 	Withheld []WithheldStub
 
+	// DefaultAllow inverts the default: an unnamed verb is forwarded to the
+	// wrapped binary rather than refused. See docs/execverb-default-allow.md.
+	DefaultAllow DefaultAllow
+
 	// Actions are declared ordered call sequences over granted exec leaves. See
 	// docs/execverb.md.
 	Actions []guardfile.Action
@@ -260,6 +296,10 @@ type Surface struct {
 	Inspect     bool        `json:"inspect,omitempty"`     // the `allow` inspect-list shape: each grant funnels its own binary, no single Bin
 	Guards      []string    `json:"guards,omitempty"`      // wrap-level guards (the passthrough host gate), applied to every leaf
 	Grants      []GrantInfo `json:"grants"`                // every mounted leaf, in mount order
+
+	// DefaultAllow is the `default-allow` reason, empty when the wrap is closed.
+	// Without it a reader reads the grants as the whole surface.
+	DefaultAllow string `json:"default_allow,omitempty"`
 }
     Surface is the in-engine model of a mounted exec surface: the wrapped
     binary, the fixed argv prefix, and every granted subcommand leaf.

@@ -104,7 +104,9 @@ func validateWithheld(gf *Guardfile) error {
 			return fmt.Errorf("execverb: `withhold %s` names a verb this guardfile grants: remove the grant or the stub, not both", label)
 		}
 		alt := strings.Join(w.Alternative, " ")
-		if alt != "" && !granted[alt] {
+		// Under default-allow every unnamed verb is reachable, so an
+		// alternative outside the grants is a live path rather than a dead one.
+		if alt != "" && !granted[alt] && !gf.DefaultAllow.Declared {
 			return fmt.Errorf("execverb: `withhold %s` names alternative %q, which this guardfile does not grant", label, alt)
 		}
 	}

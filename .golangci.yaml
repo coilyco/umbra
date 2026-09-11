@@ -1,4 +1,5 @@
 # golangci-lint config for the cli-* family. Notes: docs/release-pipeline.md.
+# gosec G204/G702 excluded: a guarded wrapper execs by design, see execverb.md.
 
 version: "2"
 
@@ -54,6 +55,7 @@ linters:
     gosec:
       excludes:
         - G204
+        - G702
         - G301
         - G302
         - G304
