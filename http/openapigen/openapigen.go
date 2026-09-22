@@ -102,7 +102,7 @@ func build(descs []opcore.Descriptor, cfg Config) (map[string]any, []string, err
 func operation(d opcore.Descriptor) map[string]any {
 	op := map[string]any{
 		"operationId": d.VerbName,
-		"responses":   map[string]any{"default": map[string]any{"description": "upstream response"}},
+		"responses":   responses(d),
 	}
 	if d.Describe != "" {
 		op["summary"] = d.Describe
@@ -143,6 +143,37 @@ func parameters(d opcore.Descriptor) []any {
 		out = append(out, p)
 	}
 	return out
+}
+
+// responses renders the leaf's success response: a declared `returns` shape
+// becomes "200", undeclared keeps the prior undifferentiated "default".
+func responses(d opcore.Descriptor) map[string]any {
+	if len(d.ReturnFields) == 0 {
+		return map[string]any{"default": map[string]any{"description": "upstream response"}}
+	}
+	return map[string]any{"200": map[string]any{
+		"description": "response, narrowed to the granted `returns` shape",
+		"content":     map[string]any{"application/json": map[string]any{"schema": returnsSchema(d)}},
+	}}
+}
+
+// returnsSchema maps ReturnFields onto a JSON Schema object, the same
+// conversion requestBody applies to BodyFlags.
+func returnsSchema(d opcore.Descriptor) map[string]any {
+	props := map[string]any{}
+	var required []string
+	for _, f := range d.ReturnFields {
+		props[f.Name] = schemaOf(f)
+		if f.Required {
+			required = append(required, f.Name)
+		}
+	}
+	schema := map[string]any{"type": "object", "properties": props}
+	if len(required) > 0 {
+		sort.Strings(required)
+		schema["required"] = required
+	}
+	return schema
 }
 
 // requestBody renders BodyFlags plus any FixedBody pin. nil when the leaf sends

@@ -36,6 +36,7 @@ code, enforced across two surfaces: `cli/` around subprocess exec, `http/` aroun
 - [YAML and TOML guardfiles](guardfile-formats.md) - the same guardfiles in two other syntaxes, lowered to KDL.
 - [Body projection](opcore-body.md) - `map`, `set`, and pinned values.
 - [Keyed maps and discriminated unions](opcore-body-variants.md) - `keyed`, `entry`, and `variant` for a body shape a fixed field list cannot describe.
+- [Declaring a grant's response shape](opcore-returns.md) - `returns`, enforced by pruning what a successful call hands back.
 - [Value providers](value-providers.md) - `env`, `file`, `literal`, and minted tokens.
 - [Audit spans](audit-spans.md) - projecting audit records onto tracing spans, and why a refusal is not an error.
 - [Upstream guardfiles](mcpverb-upstream.md) - `mcp-upstream`, the proxied-server shape.

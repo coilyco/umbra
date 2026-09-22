@@ -322,6 +322,71 @@ func TestParseInlineFailWhen(t *testing.T) {
 	}
 }
 
+func TestParseInlineReturnsFlatFields(t *testing.T) {
+	descs, _ := parseInline(t, `wrap x {
+        auth bearer { value env "T" }
+        can get repo {
+            path "/repos/{owner}/{repo}"
+            returns "id" "name" "private"
+        }
+    }`)
+	got := descByLeaf(t, descs, "get").ReturnFields
+	want := []opcore.Field{
+		{Name: "id", Type: "string"},
+		{Name: "name", Type: "string"},
+		{Name: "private", Type: "string"},
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("returns = %+v, want %+v", got, want)
+	}
+}
+
+func TestParseInlineReturnsBlock(t *testing.T) {
+	descs, _ := parseInline(t, `wrap x {
+        auth bearer { value env "T" }
+        can get repo {
+            path "/repos/{owner}/{repo}"
+            returns {
+                field "id" type="integer"
+                object "owner" {
+                    field "login" type="string"
+                }
+                array "topics" items="string"
+            }
+        }
+    }`)
+	got := descByLeaf(t, descs, "get").ReturnFields
+	want := []opcore.Field{
+		{Name: "id", Type: "integer"},
+		{Name: "owner", Type: "object", Fields: []opcore.Field{{Name: "login", Type: "string"}}},
+		{Name: "topics", Type: "array", Items: "string"},
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("returns = %+v, want %+v", got, want)
+	}
+}
+
+func TestParseInlineReturnsFailsClosed(t *testing.T) {
+	cases := map[string]string{
+		"empty":               `returns`,
+		"flat and block":      `returns "id" { field "id" type="string" }`,
+		"empty field name":    `returns ""`,
+		"duplicate flat name": `returns "id" "id"`,
+		"with raw-response":   `raw-response; returns "id"`,
+	}
+	for name, grant := range cases {
+		t.Run(name, func(t *testing.T) {
+			src := `wrap x {
+                auth bearer { value env "T" }
+                can get repo { path "/repos/{owner}/{repo}"; ` + grant + ` }
+            }`
+			if _, _, err := opcore.ParseInline([]byte(src)); err == nil {
+				t.Fatalf("invalid `returns` should fail closed: %s", grant)
+			}
+		})
+	}
+}
+
 func TestParseInlineGrantDescribe(t *testing.T) {
 	descs, _ := parseInline(t, `wrap x {
         auth bearer { value env "T" }

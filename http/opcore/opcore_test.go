@@ -104,6 +104,60 @@ func TestExecuteHappyPath(t *testing.T) {
 	}
 }
 
+// TestExecutePrunesDeclaredReturnFields checks that `returns` narrows both
+// Response.Decoded and Response.Raw, not just the decoded value.
+func TestExecutePrunesDeclaredReturnFields(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"number":7,"internal_note":"do not leak"}`))
+	}))
+	defer srv.Close()
+
+	op := newTestOp(srv, tokenAuth("s3cret"), nil)
+	op.Desc.ReturnFields = []opcore.Field{{Name: "number", Type: "integer"}}
+	resp, err := op.Execute(context.Background(), opcore.Args{
+		Path:  map[string]string{"owner": "kai", "repo": "aos"},
+		Query: map[string]string{"state": "open"},
+		Body:  map[string]any{"title": "hello"},
+	})
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+	if m, ok := resp.Decoded.(map[string]any); !ok || len(m) != 1 || m["number"] != float64(7) {
+		t.Errorf("decoded = %v, want only {number:7}", resp.Decoded)
+	}
+	var gotRaw map[string]any
+	if err := json.Unmarshal(resp.Raw, &gotRaw); err != nil {
+		t.Fatalf("unmarshal Raw: %v", err)
+	}
+	if len(gotRaw) != 1 || gotRaw["number"] != float64(7) {
+		t.Errorf("raw = %v, want only {number:7}; internal_note leaked", gotRaw)
+	}
+}
+
+// TestExecuteFailWhenSeesFullResponseBeforePruning checks that fail-when can
+// still reference a field a `returns` declaration goes on to drop.
+func TestExecuteFailWhenSeesFullResponseBeforePruning(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(`{"number":7,"state":"closed"}`))
+	}))
+	defer srv.Close()
+
+	op := newTestOp(srv, tokenAuth("s3cret"), nil)
+	op.Desc.ReturnFields = []opcore.Field{{Name: "number", Type: "integer"}}
+	op.Desc.FailWhen = "state == 'closed'"
+	_, err := op.Execute(context.Background(), opcore.Args{
+		Path:  map[string]string{"owner": "kai", "repo": "aos"},
+		Query: map[string]string{"state": "open"},
+		Body:  map[string]any{"title": "hello"},
+	})
+	if err == nil {
+		t.Fatal("expected fail-when to reject a response returns would have pruned `state` from")
+	}
+	if kind := kindOf(err); kind != "upstream_failed" {
+		t.Errorf("kind = %q, want upstream_failed", kind)
+	}
+}
+
 func TestQueryAliasMapsLocalInputToUpstreamParameter(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
 	defer srv.Close()

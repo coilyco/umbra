@@ -29,6 +29,8 @@ A guardfile granting three verbs against a 756-operation upstream emits three op
 
 A guardfile `describe` becomes the operation `summary`, and the bounds the guardfile already enforces (`enum`, `minimum`, `maximum`, `minItems`, `maxItems`) are carried onto the schema so the document states the same limits the runtime does.
 
+**A declared `returns` shape becomes the `200` response schema** (docs/opcore-returns.md), replacing the undifferentiated `default` every other leaf still emits. The document only ever states a response shape the engine itself enforces - it is never a claim about the upstream's own contract, which prune.go leaves untouched for the spec dialect.
+
 ## What is skipped, and why that is not a gap
 
 A descriptor that reaches something other than a URL is left out and named on stderr. A `graphql`, `sql`, `mcp` or proxy leaf has no HTTP path, so emitting one would invent a route that does not exist. Exec-dialect and mcp-dialect members are skipped whole for the same reason: an exec member runs a subprocess and addresses no URL at all.

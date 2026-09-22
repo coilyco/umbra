@@ -66,7 +66,7 @@ func (o Operation) Execute(ctx context.Context, a Args) (Response, error) {
 		if err := o.checkResponse(resp.Decoded, a); err != nil {
 			return Response{}, err
 		}
-		return resp, nil
+		return o.pruneResponse(resp)
 	}
 	// A sql grant never assembles a URL, so it leaves before the HTTP floor.
 	if o.Desc.SQL != nil {
@@ -77,7 +77,7 @@ func (o Operation) Execute(ctx context.Context, a Args) (Response, error) {
 		if err := o.checkResponse(resp.Decoded, a); err != nil {
 			return Response{}, err
 		}
-		return resp, nil
+		return o.pruneResponse(resp)
 	}
 	req, err := o.Resolve(ctx, a, false)
 	if err != nil {
@@ -99,7 +99,22 @@ func (o Operation) Execute(ctx context.Context, a Args) (Response, error) {
 	if err := o.checkResponse(decoded, a); err != nil {
 		return Response{}, err
 	}
-	return Response{Decoded: decoded, Raw: raw, Status: status}, nil
+	return o.pruneResponse(Response{Decoded: decoded, Raw: raw, Status: status})
+}
+
+// pruneResponse narrows resp to the declared `returns` shape and re-marshals
+// Raw to match. See docs/opcore-returns.md; no declaration is a no-op.
+func (o Operation) pruneResponse(resp Response) (Response, error) {
+	if len(o.Desc.ReturnFields) == 0 {
+		return resp, nil
+	}
+	pruned := pruneReturnFields(resp.Decoded, o.Desc.ReturnFields)
+	raw, err := json.Marshal(pruned)
+	if err != nil {
+		return Response{}, exitcode.New(exitcode.Internal, "internal", err,
+			"check the declared `returns` shape against the upstream response")
+	}
+	return Response{Decoded: pruned, Raw: raw, Status: resp.Status}, nil
 }
 
 // checkResponse evaluates an inline grant's semantic response postcondition.

@@ -1245,14 +1245,17 @@ type Descriptor struct {
 	QueryExclusive [][]string     // local query-name groups where at most one may be supplied
 	FormFlags      []Field        // formData params, where "file" types take a path
 	FixedBody      map[string]any // pinned body keys, alone for a state toggle or seeding a mapped body
-	Destructive    bool           // leaf mutates irreversibly (delete)
-	Grant          string         // the authorizing grant sentence, e.g. "can delete repos"
-	Describe       string         // optional Guardfile describe "..." note, "" if none
-	FailWhen       string         // optional JMESPath response postcondition; truthy rejects a successful call
-	Proxy          *Proxy         // non-nil for an inline MCP proxy grant
-	GraphQL        *GraphQL       // non-nil for a `graphql` grant; owns the whole body
-	SQL            *SQL           // non-nil for a `sql` grant; reaches a database, not a URL
-	MCP            *MCPCall       // non-nil for an `mcp` dialect leaf; reaches a session, not a URL
+	// ReturnFields is the optional `returns` declaration a successful response
+	// is pruned to before Execute hands it back. See docs/opcore-returns.md.
+	ReturnFields []Field
+	Destructive  bool     // leaf mutates irreversibly (delete)
+	Grant        string   // the authorizing grant sentence, e.g. "can delete repos"
+	Describe     string   // optional Guardfile describe "..." note, "" if none
+	FailWhen     string   // optional JMESPath response postcondition; truthy rejects a successful call
+	Proxy        *Proxy   // non-nil for an inline MCP proxy grant
+	GraphQL      *GraphQL // non-nil for a `graphql` grant; owns the whole body
+	SQL          *SQL     // non-nil for a `sql` grant; reaches a database, not a URL
+	MCP          *MCPCall // non-nil for an `mcp` dialect leaf; reaches a session, not a URL
 	// Meta is upstream `_meta`, kept verbatim and never interpreted. A served
 	// surface forwards it; MCP Apps addresses its widget there.
 	Meta map[string]any

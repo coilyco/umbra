@@ -21,8 +21,9 @@ Keys are snake_case and map to the kebab-case node. An unknown key is an error, 
 - **auth** - `scheme` (required), `header`, `prefix`, `value`, `params` (list of `name`, `value`).
 - **A value source** - `{env: NAME}`, `{ssm: /path}`, or another provider, one per mapping. A list of them is an ordered fallback chain.
 - **restrict** - list of `param`, `matches`.
-- **A grant** - `verb` and `resource` (required), `qualifiers`, `props`, `op` (an id, or `{method, path}`), `path`, `method`, `describe`, `message`, `fail_when`, `raw_response`, `query`, `body`, `fixed_body`, `set`, `kdl`.
+- **A grant** - `verb` and `resource` (required), `qualifiers`, `props`, `op` (an id, or `{method, path}`), `path`, `method`, `describe`, `message`, `fail_when`, `raw_response`, `query`, `body`, `returns`, `fixed_body`, `set`, `kdl`.
 - **query and body** - a list of names, or a list of typed entries. An entry names its kind (`field`, `array`, `object`, or `map`), carries its bounds as sibling keys, and nests through `entries`.
+- **returns** - a list of names, or the same typed-entry grammar as `body`, minus upstream aliasing (a response field has no outgoing wire name to rename). Declares the response shape a caller is granted; a successful response is pruned to it before anything renders it. Undeclared keeps the prior whole-response pass-through. See [docs/opcore-returns.md](opcore-returns.md).
 - **fixed_body** - the spec dialect's `body key=value` toggle. It is its own key because the inline dialect's `body` lists field names.
 
 ## The `kdl` escape

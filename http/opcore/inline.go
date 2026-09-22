@@ -308,14 +308,11 @@ func applyInlineGrantChild(d *Descriptor, c *kdl.Node) error {
 		}
 		d.Path = v
 	case "query":
-		fields, exclusive, err := inlineQueryFields(c)
-		if err != nil {
-			return err
-		}
-		d.QueryFlags = append(d.QueryFlags, fields...)
-		d.QueryExclusive = append(d.QueryExclusive, exclusive...)
+		return applyInlineQuery(d, c)
 	case "body":
 		return applyInlineBody(d, c)
+	case "returns":
+		return applyInlineReturns(d, c)
 	case "method":
 		return applyInlineMethod(d, c)
 	case "raw-response":
@@ -386,6 +383,65 @@ func applyInlineBody(d *Descriptor, c *kdl.Node) error {
 	return nil
 }
 
+// applyInlineQuery mounts a `query` grant child's fields and exclusion groups
+// onto d.
+func applyInlineQuery(d *Descriptor, c *kdl.Node) error {
+	fields, exclusive, err := inlineQueryFields(c)
+	if err != nil {
+		return err
+	}
+	d.QueryFlags = append(d.QueryFlags, fields...)
+	d.QueryExclusive = append(d.QueryExclusive, exclusive...)
+	return nil
+}
+
+// applyInlineReturns mounts a `returns` grant child's fields onto d.
+func applyInlineReturns(d *Descriptor, c *kdl.Node) error {
+	fields, err := inlineReturnsFields(c)
+	if err != nil {
+		return err
+	}
+	d.ReturnFields = append(d.ReturnFields, fields...)
+	return nil
+}
+
+// inlineReturnsFields reads a `returns` grant child: flat field names, or the
+// same block grammar `body` uses, minus upstream aliasing (docs/opcore-returns.md).
+func inlineReturnsFields(c *kdl.Node) ([]Field, error) {
+	hasChildren := c.Children() != nil && len(c.Children().Nodes) > 0
+	hasArgs := len(c.Arguments()) > 0
+	if hasChildren && hasArgs {
+		return nil, fmt.Errorf("`returns` takes either flat field names or a block, not both (fail-closed)")
+	}
+	if hasArgs {
+		return inlineReturnsFlatFields(c)
+	}
+	if !hasChildren {
+		return nil, fmt.Errorf("`returns` needs at least one field name or a block")
+	}
+	return parseBodyChildren(c.Children().Nodes)
+}
+
+// inlineReturnsFlatFields reads `returns "a" "b"` as untyped top-level keys:
+// enough to prune by name, with no claim about their shape.
+func inlineReturnsFlatFields(c *kdl.Node) ([]Field, error) {
+	args := c.Arguments()
+	out := make([]Field, 0, len(args))
+	seen := map[string]bool{}
+	for _, a := range args {
+		name := a.String()
+		if name == "" {
+			return nil, fmt.Errorf("`returns` field name is empty (fail-closed)")
+		}
+		if seen[name] {
+			return nil, fmt.Errorf("duplicate `returns` field %q (fail-closed)", name)
+		}
+		seen[name] = true
+		out = append(out, Field{Name: name, Type: "string"})
+	}
+	return out, nil
+}
+
 func applyInlineGrantControlChild(d *Descriptor, c *kdl.Node) error {
 	switch c.Name() {
 	case "describe":
@@ -430,6 +486,10 @@ func validateGrant(d Descriptor, verb, resource string) error {
 	// and would sit inert rather than guarding anything.
 	if d.RawResponse && d.FailWhen != "" {
 		return fmt.Errorf("opcore: can %s %s: `raw-response` cannot be combined with `fail-when`, which needs a decoded response (fail-closed)", verb, resource)
+	}
+	// A raw body is never decoded, so there is nothing for `returns` to prune.
+	if d.RawResponse && len(d.ReturnFields) > 0 {
+		return fmt.Errorf("opcore: can %s %s: `raw-response` cannot be combined with `returns`, which needs a decoded response (fail-closed)", verb, resource)
 	}
 	if err := validateSQLGrant(d, verb, resource); err != nil {
 		return err

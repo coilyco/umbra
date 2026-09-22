@@ -118,6 +118,55 @@ func TestFixedBodyIsConstNotAFreeField(t *testing.T) {
 	}
 }
 
+func TestUndeclaredReturnsKeepsTheDefaultResponse(t *testing.T) {
+	raw, _, err := Emit([]opcore.Descriptor{{VerbName: "v.get", Method: "GET", Path: "/p"}}, Config{})
+	if err != nil {
+		t.Fatalf("Emit: %v", err)
+	}
+	got := op(t, decode(t, raw), "/p", "get")["responses"].(map[string]any)
+	if _, ok := got["default"]; !ok {
+		t.Errorf("responses = %v, want the undifferentiated default", got)
+	}
+	if _, ok := got["200"]; ok {
+		t.Error("a leaf with no `returns` declaration emitted a 200 schema it does not enforce")
+	}
+}
+
+func TestDeclaredReturnsBecomesThe200Schema(t *testing.T) {
+	raw, _, err := Emit([]opcore.Descriptor{{
+		VerbName: "v.get", Method: "GET", Path: "/p",
+		ReturnFields: []opcore.Field{
+			{Name: "id", Type: "integer", Required: true},
+			{Name: "name", Type: "string"},
+		},
+	}}, Config{})
+	if err != nil {
+		t.Fatalf("Emit: %v", err)
+	}
+	responses := op(t, decode(t, raw), "/p", "get")["responses"].(map[string]any)
+	if _, ok := responses["default"]; ok {
+		t.Error("a leaf with a `returns` declaration still emitted the undifferentiated default")
+	}
+	got, ok := responses["200"].(map[string]any)
+	if !ok {
+		t.Fatalf("responses = %v, want a 200 entry", responses)
+	}
+	content, _ := got["content"].(map[string]any)
+	js, _ := content["application/json"].(map[string]any)
+	schema, _ := js["schema"].(map[string]any)
+	props, _ := schema["properties"].(map[string]any)
+	if _, ok := props["id"]; !ok {
+		t.Errorf("schema properties = %v, want id", props)
+	}
+	if _, ok := props["name"]; !ok {
+		t.Errorf("schema properties = %v, want name", props)
+	}
+	required, _ := schema["required"].([]any)
+	if len(required) != 1 || required[0] != "id" {
+		t.Errorf("required = %v, want only id", required)
+	}
+}
+
 func TestEmitRefusesADuplicateOperationID(t *testing.T) {
 	_, _, err := Emit([]opcore.Descriptor{
 		{VerbName: "v.same", Method: "GET", Path: "/a"},
