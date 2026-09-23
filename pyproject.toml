@@ -8,6 +8,10 @@ org = "coilyco-flight-deck"
 # sweep rather than chosen: 22 docs against its 20-doc cap, and per-file caps
 # half the pre-band flat one. See inbox#439.
 band = "large"
+# An evaluation record is evidence rather than a page, and splitting one to fit
+# is how it stops reading as one record. Kai's call, 2026-09-23.
+excludes = ["evaluations/**"]
+size_excludes = ["evaluations/**"]
 
 # The managed markers are stamped inside the pre-commit YAML and
 # cannot form a single top-of-file comment block.
