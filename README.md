@@ -81,6 +81,5 @@ consumer of one, so its dev verbs run through the [`justfile`](justfile):
 
 - [AGENTS.md](AGENTS.md) - agent-facing operating rules.
 - [a new issue](https://github.com/coilyco/umbra/issues/new) - bugs and requests, under the [Code of Conduct](CODE_OF_CONDUCT.md) and [SECURITY.md](SECURITY.md).
-- [mcp-beaver](https://github.com/coilyco/mcp-beaver) - the sibling that renders a guardfile into a guarded MCP server.
 
 MIT. See [LICENSE](LICENSE).
