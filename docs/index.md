@@ -48,5 +48,6 @@ code, enforced across two surfaces: `cli/` around subprocess exec, `http/` aroun
 ## Contributing
 - [Contributing](CONTRIBUTING.md) - how to propose a change.
 - [Release pipeline](release-pipeline.md) - Forgejo-canonical publication and the mark.
+- [umbra v2 on urfave/cli v4](umbra-v2.md) - the living plan to rebuild on v4, and the upstream loop with urfave/cli.
 
 Sibling repo: [mcp-beaver](https://forgejo.coilysiren.me/coilyco-flight-deck/mcp-beaver).
