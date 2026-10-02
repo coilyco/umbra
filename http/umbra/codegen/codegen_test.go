@@ -7,12 +7,12 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 const fixture = `wrap ward-kdl ops forgejo {
 	spec forgejo.swagger.v1.json
-	base-url "forgejo.coilysiren.me/api/v1"
+	base-url "forgejo.example/api/v1"
 	auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 	can read repos { op "repoGet" }
 	can create repos { op "createCurrentUserRepo" }
@@ -40,7 +40,7 @@ func TestRenderProducesValidGo(t *testing.T) {
 		"var embeddedSpec0 []byte",
 		`Name: "ward-kdl"`,
 		"specverb.Mount(app",
-		`"https://forgejo.coilysiren.me/swagger.v1.json", "WARD_KDL_OPS_FORGEJO_SPEC"`,
+		`"https://forgejo.example/swagger.v1.json", "WARD_KDL_OPS_FORGEJO_SPEC"`,
 	} {
 		if !strings.Contains(src, want) {
 			t.Errorf("generated source missing %q", want)
@@ -154,7 +154,7 @@ func TestRenderParamsMixed(t *testing.T) {
 		HasSpec: true,
 		HasExec: true,
 		Mounts: []Params{
-			{Transport: TransportSpec, Binary: "ward-kdl", GuardfileName: "forgejo.guardfile.kdl", SpecLockName: "forgejo.swagger.lock.json.gz", SpecURL: "https://forgejo.coilysiren.me/swagger.v1.json", SpecEnvVar: "WARD_KDL_OPS_FORGEJO_SPEC", Providers: []string{"ssm"}, ProviderDecls: []guardfile.ProviderDecl{{Name: "ssm", Exec: []string{"aws", "ssm", "get-parameter"}}}},
+			{Transport: TransportSpec, Binary: "ward-kdl", GuardfileName: "forgejo.guardfile.kdl", SpecLockName: "forgejo.swagger.lock.json.gz", SpecURL: "https://forgejo.example/swagger.v1.json", SpecEnvVar: "WARD_KDL_OPS_FORGEJO_SPEC", Providers: []string{"ssm"}, ProviderDecls: []guardfile.ProviderDecl{{Name: "ssm", Exec: []string{"aws", "ssm", "get-parameter"}}}},
 			{Transport: TransportExec, Binary: "ward-kdl", GuardfileName: "aws.guardfile.kdl"},
 		},
 	})
@@ -239,8 +239,8 @@ func TestDeriveLockName(t *testing.T) {
 
 func TestDeriveSpecURL(t *testing.T) {
 	cases := map[string]string{
-		"forgejo.coilysiren.me/api/v1":         "https://forgejo.coilysiren.me/swagger.v1.json",
-		"https://forgejo.coilysiren.me/api/v1": "https://forgejo.coilysiren.me/swagger.v1.json",
+		"forgejo.example/api/v1":         "https://forgejo.example/swagger.v1.json",
+		"https://forgejo.example/api/v1": "https://forgejo.example/swagger.v1.json",
 	}
 	for in, want := range cases {
 		got, err := deriveSpecURL(in)
@@ -267,7 +267,7 @@ func TestPlanDerivesParams(t *testing.T) {
 		Binary:        "ward-kdl",
 		GuardfileName: "forgejo.guardfile.kdl",
 		SpecLockName:  "forgejo.swagger.lock.json.gz",
-		SpecURL:       "https://forgejo.coilysiren.me/swagger.v1.json",
+		SpecURL:       "https://forgejo.example/swagger.v1.json",
 		SpecEnvVar:    "WARD_KDL_OPS_FORGEJO_SPEC",
 		Providers:     []string{"ssm"},
 	}

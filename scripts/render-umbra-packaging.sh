@@ -14,7 +14,7 @@ case "$version" in
 esac
 
 bare=${version#v}
-base="https://forgejo.coilysiren.me/coilyco-flight-deck/umbra/releases/download/${version}"
+base="https://github.com/coilyco/umbra/releases/download/${version}"
 
 sha() {
   if command -v sha256sum >/dev/null 2>&1; then
@@ -34,7 +34,7 @@ windows_arm64=$(sha "$dist/umbra-windows-arm64.exe")
 cat > "$dist/umbra.rb" <<EOF
 class Umbra < Formula
   desc "Generate guarded CLIs from KDL policy and committed API locks"
-  homepage "https://forgejo.coilysiren.me/coilyco-flight-deck/umbra"
+  homepage "https://github.com/coilyco/umbra"
   version "${bare}"
   license "MIT"
 
@@ -73,7 +73,7 @@ cat > "$dist/umbra.json" <<EOF
 {
     "version": "${bare}",
     "description": "Generate guarded CLIs from KDL policy and committed API locks",
-    "homepage": "https://forgejo.coilysiren.me/coilyco-flight-deck/umbra",
+    "homepage": "https://github.com/coilyco/umbra",
     "license": "MIT",
     "architecture": {
         "64bit": {

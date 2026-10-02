@@ -24,7 +24,7 @@ func TestParseFixture(t *testing.T) {
 	if got, want := gf.Spec, "forgejo.swagger.v1.json"; got != want {
 		t.Errorf("Spec = %q, want %q", got, want)
 	}
-	if got, want := gf.BaseURL, "https://forgejo.coilysiren.me/api/v1"; got != want {
+	if got, want := gf.BaseURL, "https://forgejo.example/api/v1"; got != want {
 		t.Errorf("BaseURL = %q, want %q", got, want)
 	}
 
@@ -477,14 +477,14 @@ func TestParseAuthSchemes(t *testing.T) {
 func TestParseBaseURLForms(t *testing.T) {
 	str, err := Parse([]byte(`wrap w ops forgejo {
 		spec s
-		base-url "forgejo.coilysiren.me/api/v1"
+		base-url "forgejo.example/api/v1"
 		auth bearer { value ssm "/x" }
 		can get session { op o }
 	}`))
 	if err != nil {
 		t.Fatalf("string base-url parse: %v", err)
 	}
-	if str.BaseURL != "forgejo.coilysiren.me/api/v1" || !str.BaseURLValue.IsZero() {
+	if str.BaseURL != "forgejo.example/api/v1" || !str.BaseURLValue.IsZero() {
 		t.Errorf("string form: BaseURL=%q BaseURLValue=%+v", str.BaseURL, str.BaseURLValue)
 	}
 

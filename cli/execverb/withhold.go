@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
 	kdl "github.com/calico32/kdl-go"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/pkg/exitcode"
 	"github.com/urfave/cli/v3"
 )
 

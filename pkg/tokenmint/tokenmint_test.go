@@ -10,8 +10,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/tokenmint"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/pkg/tokenmint"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // tokenServer counts mints and records what the client sent, so "did not hit

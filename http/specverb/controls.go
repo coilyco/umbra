@@ -6,9 +6,9 @@ import (
 	"io"
 	"net/http"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/negcontrol"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/negcontrol"
 	"github.com/urfave/cli/v3"
 )
 

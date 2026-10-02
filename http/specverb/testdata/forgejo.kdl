@@ -3,7 +3,7 @@
 
 wrap ward ops forgejo {
     spec forgejo.swagger.v1.json
-    base-url "https://forgejo.coilysiren.me/api/v1"
+    base-url "https://forgejo.example/api/v1"
     auth header-token {
         header Authorization
         prefix "token "

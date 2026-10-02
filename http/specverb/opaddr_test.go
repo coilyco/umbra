@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // umbra#6824: operationId is OPTIONAL in the OpenAPI Specification, and a

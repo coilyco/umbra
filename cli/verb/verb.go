@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/policy"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/scope"
+	"github.com/coilyco/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/policy"
+	"github.com/coilyco/umbra/pkg/scope"
 	"github.com/urfave/cli/v3"
 )
 

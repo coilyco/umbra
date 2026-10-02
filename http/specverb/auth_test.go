@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // TestBearerAuthLive proves the bearer scheme sends `Authorization: Bearer <secret>`

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/mcpverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/http/mcpverb"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 )
 
 // lockedTool is an upstream tool as `umbra lock` froze it, carrying the

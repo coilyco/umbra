@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/opcore"
 )
 
 // keyedScalarSrc is a `keyed` object whose entry is a bare scalar - the

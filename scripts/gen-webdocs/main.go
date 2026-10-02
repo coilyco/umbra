@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/internal/clitrees"
+	"github.com/coilyco/umbra/internal/clitrees"
 	webdocs "github.com/coilysiren/cli-web-docs"
 	"github.com/coilysiren/cli-web-docs/layout"
 	"github.com/urfave/cli/v3"

@@ -15,14 +15,14 @@ import (
 	"strings"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/execverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/mcpverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/specverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/codegen"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/flock"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/skillgen"
 	kdl "github.com/calico32/kdl-go"
+	"github.com/coilyco/umbra/cli/execverb"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/mcpverb"
+	"github.com/coilyco/umbra/http/specverb"
+	"github.com/coilyco/umbra/http/umbra/codegen"
+	"github.com/coilyco/umbra/pkg/flock"
+	"github.com/coilyco/umbra/pkg/skillgen"
 	"github.com/urfave/cli/v3"
 )
 

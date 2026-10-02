@@ -9,8 +9,8 @@ import (
 
 	kdl "github.com/calico32/kdl-go"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/opcore"
 )
 
 // dump renders a KDL tree canonically, so equal text means an equal tree.

@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
 	kdl "github.com/calico32/kdl-go"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // parseBodyMappings reads a body block containing only

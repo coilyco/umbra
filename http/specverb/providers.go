@@ -1,7 +1,7 @@
 package specverb
 
 import (
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // Provider resolves the value at address for one named value source: the shared

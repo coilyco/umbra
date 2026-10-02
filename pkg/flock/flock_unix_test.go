@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/flock"
+	"github.com/coilyco/umbra/pkg/flock"
 )
 
 // openLock creates and opens a lock file under t.TempDir().

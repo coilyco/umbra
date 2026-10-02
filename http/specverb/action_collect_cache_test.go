@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/config"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/config"
 	"github.com/urfave/cli/v3"
 )
 
@@ -29,7 +29,7 @@ func cachedCollectGuardfile(t *testing.T, ttl string) *guardfile.Guardfile {
 	}
 	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
 		spec forgejo.swagger.v1.json
-		base-url "https://forgejo.coilysiren.me/api/v1"
+		base-url "https://forgejo.example/api/v1"
 		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 		can list issue { op "issueListIssues" }
 		action list-all issue {

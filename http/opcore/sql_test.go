@@ -9,8 +9,8 @@ import (
 	"sync"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // recordingDriver is a real database/sql driver recording what the engine

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"io"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra"
+	"github.com/coilyco/umbra/http/umbra"
 	"github.com/urfave/cli/v3"
 )
 

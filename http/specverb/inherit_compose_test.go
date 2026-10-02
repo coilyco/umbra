@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // TestInheritWildcardComposesThroughEngine proves a write tier that inherits a

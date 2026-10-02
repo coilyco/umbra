@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // OwnerRepoArg is the documented `args` sugar: a single `owner/name` value

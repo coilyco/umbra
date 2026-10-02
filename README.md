@@ -42,19 +42,19 @@ boundary to an existing [urfave/cli](https://github.com/urfave/cli) v3 app.
 Nothing consumer-shaped leaks into the API.
 
 ```sh
-GOPRIVATE=forgejo.coilysiren.me go get forgejo.coilysiren.me/coilyco-flight-deck/umbra
+go get github.com/coilyco/umbra
 ```
 
 ## Install umbra
 
 ```sh
-brew tap coilyco-flight-deck/tap https://forgejo.coilysiren.me/coilyco-flight-deck/homebrew-tap
-brew install coilyco-flight-deck/tap/umbra
+brew tap coilyco/tap
+brew install coilyco/tap/umbra
 ```
 
 ```powershell
-scoop bucket add coilyco-flight-deck https://forgejo.coilysiren.me/coilyco-flight-deck/scoop-bucket
-scoop install coilyco-flight-deck/umbra
+scoop bucket add coilyco https://github.com/coilyco/scoop-bucket
+scoop install coilyco/umbra
 ```
 
 Tagged releases also publish raw binaries and `SHA256SUMS` for Linux, macOS, and
@@ -73,15 +73,14 @@ a refusal, and [`guides/`](guides/) holds one walkthrough per surface.
 
 v0.x. Minor API breaks land on `main` with a note in the commit body and no
 deprecation cycle, so pin a commit in your `go.mod` until v1.0.0. The API locks
-once a second consumer lands. Forgejo is canonical and the GitHub mirror is
-verified. umbra is deliberately unguarded, being the framework rather than a
+once a second consumer lands. umbra is deliberately unguarded, being the framework rather than a
 consumer of one, so its dev verbs run through the [`justfile`](justfile):
 `just build`, `just test`, `just lint`, `just vet`, and `just docs-cli` for the generated CLI reference.
 
 ## See also
 
 - [AGENTS.md](AGENTS.md) - agent-facing operating rules.
-- [a new issue](https://forgejo.coilysiren.me/coilyco-flight-deck/umbra/issues/new) - bugs and requests, under the [Code of Conduct](CODE_OF_CONDUCT.md) and [SECURITY.md](SECURITY.md).
-- [mcp-beaver](https://forgejo.coilysiren.me/coilyco-flight-deck/mcp-beaver) - the sibling that renders a guardfile into a guarded MCP server.
+- [a new issue](https://github.com/coilyco/umbra/issues/new) - bugs and requests, under the [Code of Conduct](CODE_OF_CONDUCT.md) and [SECURITY.md](SECURITY.md).
+- [mcp-beaver](https://github.com/coilyco/mcp-beaver) - the sibling that renders a guardfile into a guarded MCP server.
 
 MIT. See [LICENSE](LICENSE).

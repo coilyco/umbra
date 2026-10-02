@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // Prune returns a minimal spec doc holding only the operations gf grants and

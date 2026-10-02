@@ -13,13 +13,13 @@ import (
 
 	kdl "github.com/calico32/kdl-go"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/codegen"
+	"github.com/coilyco/umbra/http/umbra/codegen"
 	"gopkg.in/yaml.v3"
 )
 
 const guardfileFixture = `wrap ward-kdl ops forgejo {
 	spec forgejo.swagger.v1.json
-	base-url "forgejo.coilysiren.me/api/v1"
+	base-url "forgejo.example/api/v1"
 	auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 	can read repos { op "repoGet" }
 	can create repos { op "createCurrentUserRepo" }
@@ -794,7 +794,7 @@ func TestDiscover_NamesTheRenameRatherThanReportingNoProject(t *testing.T) {
 const yamlSpecMember = `wrap:
   command: [ward-kdl, ops, cloud]
   spec: forgejo.swagger.v1.json
-  base_url: forgejo.coilysiren.me/api/v1
+  base_url: forgejo.example/api/v1
   auth:
     scheme: header-token
     header: Authorization

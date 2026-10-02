@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/audit"
 )
 
 // The most basic shape: open a writer, append one record, close.

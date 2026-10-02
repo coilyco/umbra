@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/config"
+	"github.com/coilyco/umbra/pkg/config"
 )
 
 // chdirT swaps the process cwd to dir for the test's lifetime. Go 1.24

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/pkg/exitcode"
 	"github.com/urfave/cli/v3"
 )
 

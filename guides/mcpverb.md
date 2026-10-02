@@ -33,7 +33,7 @@ format verb, not a typo: the URL is unknown until the server starts.
 ```sh
 mkdir -p mcpdemo && cd mcpdemo
 go mod init example.com/mcpdemo
-go get forgejo.coilysiren.me/coilyco-flight-deck/umbra
+go get github.com/coilyco/umbra
 ```
 
 Put this in `main.go`. It is the whole example.
@@ -48,8 +48,8 @@ import (
 	"net/http/httptest"
 	"os"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/mcpverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/http/mcpverb"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/urfave/cli/v3"
 )

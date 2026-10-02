@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/respfmt"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/respfmt"
+	"github.com/coilyco/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 	"github.com/urfave/cli/v3"
 )
 

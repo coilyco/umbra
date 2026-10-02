@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // A replacement is installed under the wrapped tool's own name, so the caller

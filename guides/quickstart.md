@@ -16,13 +16,13 @@ will differ, while refusal text and exit codes are verbatim.
 ## 1. Install umbra
 
 ```sh
-brew tap coilyco-flight-deck/tap https://forgejo.coilysiren.me/coilyco-flight-deck/homebrew-tap
-brew install coilyco-flight-deck/tap/umbra
+brew tap coilyco/tap
+brew install coilyco/tap/umbra
 ```
 
 ```powershell
-scoop bucket add coilyco-flight-deck https://forgejo.coilysiren.me/coilyco-flight-deck/scoop-bucket
-scoop install coilyco-flight-deck/umbra
+scoop bucket add coilyco https://github.com/coilyco/scoop-bucket
+scoop install coilyco/umbra
 ```
 
 Check it landed:

@@ -35,7 +35,7 @@ for target in "${targets[@]}"; do
   echo "building $artifact"
   GOOS="$target_os" GOARCH="$target_arch" CGO_ENABLED=0 \
     go build -trimpath \
-      -ldflags "-s -w -X forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra.buildVersion=${version}" \
+      -ldflags "-s -w -X github.com/coilyco/umbra/http/umbra.buildVersion=${version}" \
       -o "$artifact" ./cmd/umbra
 done
 

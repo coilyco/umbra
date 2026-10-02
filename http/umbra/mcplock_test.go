@@ -13,8 +13,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/codegen"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/http/umbra/codegen"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

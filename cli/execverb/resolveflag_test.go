@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // umbra#6830: two tokens stashed at 72 bytes stored at 71 only because a

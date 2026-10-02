@@ -10,7 +10,7 @@ Each `ServedTool` carries the upstream tool name, its description, a draft-07 in
 
 ## umbra builds this and does not serve it
 
-Owning a transport, a session registry, and a process lifetime is a different job from gating a request, and it is the job the consumer already has. This is the same boundary that kept an aggregating proxy out of umbra in [umbra#336](https://forgejo.coilysiren.me/coilyco-flight-deck/umbra/issues/336), so a served surface here would reopen a decision rather than extend one.
+Owning a transport, a session registry, and a process lifetime is a different job from gating a request, and it is the job the consumer already has. This is the same boundary that kept an aggregating proxy out of umbra in [umbra#336](https://github.com/coilyco/umbra/issues/336), so a served surface here would reopen a decision rather than extend one.
 
 What umbra owes a serving consumer is the policy, the schema, and the guarded execution path. Not the socket.
 

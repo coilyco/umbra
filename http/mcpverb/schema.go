@@ -5,8 +5,8 @@ import (
 	"sort"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 )
 
 // maxSchemaDepth bounds nesting while lowering a tool's input schema to flags.

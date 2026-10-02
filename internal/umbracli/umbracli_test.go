@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra"
+	"github.com/coilyco/umbra/http/umbra"
 )
 
 func TestVersionReportsDriverAndDefaultCLIGuardRef(t *testing.T) {

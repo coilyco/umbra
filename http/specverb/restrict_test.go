@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // restrictFixture grants repo get/delete under a `restrict owner matches "example-*"`

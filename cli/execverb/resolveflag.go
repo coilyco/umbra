@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // filePrefix is the file-reference convention the wrapped CLIs already speak,

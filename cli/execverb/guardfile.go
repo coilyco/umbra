@@ -7,9 +7,9 @@ import (
 	"path"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/policy"
 	kdl "github.com/calico32/kdl-go"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/pkg/policy"
 )
 
 // Guardfile is the parsed form of one exec-dialect wrap block.

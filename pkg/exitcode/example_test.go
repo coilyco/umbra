@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // Annotate any error with a public exit-code so orchestrators can

@@ -10,9 +10,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/respfmt"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/stepflow"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/respfmt"
+	"github.com/coilyco/umbra/pkg/stepflow"
 )
 
 // CaptureRunner fires a step command and captures its output (unlike Runner,

@@ -1,4 +1,4 @@
-module forgejo.coilysiren.me/coilyco-flight-deck/umbra
+module github.com/coilyco/umbra
 
 go 1.25.5
 

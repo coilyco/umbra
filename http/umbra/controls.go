@@ -7,9 +7,9 @@ import (
 	"io"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/execverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/specverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/negcontrol"
+	"github.com/coilyco/umbra/cli/execverb"
+	"github.com/coilyco/umbra/http/specverb"
+	"github.com/coilyco/umbra/pkg/negcontrol"
 )
 
 // ErrControlsFailed is returned when a stated refusal does not hold. The report

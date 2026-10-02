@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/execverb"
+	"github.com/coilyco/umbra/cli/execverb"
 )
 
 func main() {

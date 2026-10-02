@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 const neverText = "is never allowed by this guardfile"

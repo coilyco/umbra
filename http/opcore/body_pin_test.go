@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // bodyEcho captures the one outgoing body a grant sends.

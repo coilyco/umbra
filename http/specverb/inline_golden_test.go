@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/opcore"
 )
 
 // TestInlineAndResolvedDescriptorsAreEqual is the shared golden: an op stated

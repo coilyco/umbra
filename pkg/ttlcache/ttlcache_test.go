@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/ttlcache"
+	"github.com/coilyco/umbra/pkg/ttlcache"
 )
 
 func TestSetGet_RoundTrip(t *testing.T) {

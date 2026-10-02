@@ -10,7 +10,7 @@ import (
 	"strings"
 	"text/template"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // Transport is the dialect one merged member speaks: spec (HTTP/specverb),
@@ -303,18 +303,18 @@ import (
 	"net/http"
 	"time"
 {{end}}
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/config"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-{{if .HasSpec}}	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/specverb"
-{{end}}{{if .HasExec}}	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/execverb"
-{{end}}{{if .HasMCP}}	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/mcpverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/config"
+	"github.com/coilyco/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/cli/verb"
+{{if .HasSpec}}	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/specverb"
+{{end}}{{if .HasExec}}	"github.com/coilyco/umbra/cli/execverb"
+{{end}}{{if .HasMCP}}	"github.com/coilyco/umbra/http/mcpverb"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 	"encoding/json"
-{{end}}{{if .HasEmbeds}}	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/embedfile"
+{{end}}{{if .HasEmbeds}}	"github.com/coilyco/umbra/http/umbra/embedfile"
 {{end}}	"github.com/urfave/cli/v3"
 )
 

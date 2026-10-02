@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/valuesource"
 	"github.com/urfave/cli/v3"
 )
 

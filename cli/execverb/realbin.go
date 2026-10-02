@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // ResolveReal resolves bin to the real binary a replacement stands in front of,

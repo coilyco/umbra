@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/opcore"
 )
 
 // Version is the emitted document's OpenAPI version. 3.1 rather than 3.0

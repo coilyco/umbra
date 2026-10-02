@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // emptyAnswer reports whether output carries nothing a reader could use: no

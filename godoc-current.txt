@@ -1,6 +1,6 @@
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/execverb
+## github.com/coilyco/umbra/cli/execverb
 
-package execverb // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/execverb"
+package execverb // import "github.com/coilyco/umbra/cli/execverb"
 
 Package execverb mounts exec-shaped verbs from a KDL Guardfile: the exec dialect
 of the spec-driven design. See docs/execverb.md.
@@ -365,9 +365,9 @@ func (w WithheldStub) Label() string
     Label renders the withheld verb's path for help and error text.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb
+## github.com/coilyco/umbra/cli/verb
 
-package verb // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
+package verb // import "github.com/coilyco/umbra/cli/verb"
 
 Package verb is the middleware that wraps every consumer command action in the
 standard pipeline of:
@@ -423,18 +423,18 @@ type Spec struct {
     Spec describes a verb before it is wrapped into a cli.ActionFunc.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/cmd/kdl-specs
+## github.com/coilyco/umbra/cmd/kdl-specs
 
 Command kdl-specs is the compatibility entrypoint for consumers that have not
 migrated their Go invocation path to cmd/umbra.
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/cmd/umbra
+## github.com/coilyco/umbra/cmd/umbra
 
 Command umbra is the no-code driver for generating guarded consumer CLIs.
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile
+## github.com/coilyco/umbra/http/guardfile
 
-package guardfile // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+package guardfile // import "github.com/coilyco/umbra/http/guardfile"
 
 Package guardfile parses a KDL Guardfile, the human authoring layer (L2) of the
 specverb engine, into a typed model. KDL is parsed, never evaluated.
@@ -775,9 +775,9 @@ func (v ValueSource) IsZero() bool
     IsZero reports whether the source is unset (no provider named).
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/mcpverb
+## github.com/coilyco/umbra/http/mcpverb
 
-package mcpverb // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/mcpverb"
+package mcpverb // import "github.com/coilyco/umbra/http/mcpverb"
 
 Package mcpverb mounts MCP-shaped verbs from a KDL Guardfile: the mcp dialect of
 the spec-driven design, beside the spec dialect (specverb) and the exec dialect
@@ -1079,9 +1079,9 @@ func (w *WidgetGate) Tools() []mcpclient.Tool
     Tools is the surface this view may see and call.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore
+## github.com/coilyco/umbra/http/opcore
 
-package opcore // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
+package opcore // import "github.com/coilyco/umbra/http/opcore"
 
 Package opcore is the urfave/cli-free engine core of the spec-driven verb
 design: the per-operation descriptor, the request runtime, and the self-guarding
@@ -1099,7 +1099,7 @@ const (
 )
     Location constants label where a Property lowers onto the outgoing request.
 
-const DefaultUserAgent = "umbra/1.0 (+https://github.com/coilyco-flight-deck/umbra)"
+const DefaultUserAgent = "umbra/1.0 (+https://github.com/coilyco/umbra)"
     DefaultUserAgent names this client when nothing else does. Go's default is
     refused outright by some APIs; see docs/specverb-request.md (umbra#303).
 
@@ -1600,9 +1600,9 @@ type Variant struct {
     docs/opcore-body-variants.md.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/openapigen
+## github.com/coilyco/umbra/http/openapigen
 
-package openapigen // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/openapigen"
+package openapigen // import "github.com/coilyco/umbra/http/openapigen"
 
 
 CONSTANTS
@@ -1630,9 +1630,9 @@ type Config struct {
     Config carries what the descriptors do not: the document's own identity.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/respfmt
+## github.com/coilyco/umbra/http/respfmt
 
-package respfmt // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/respfmt"
+package respfmt // import "github.com/coilyco/umbra/http/respfmt"
 
 Package respfmt renders a JSON response body through an optional JMESPath
 projection and one of five output formats: yaml (default),
@@ -1674,9 +1674,9 @@ func Validate(expr string) error
     the build-time check that fails closed on a malformed `until`/`fail-when`.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/specverb
+## github.com/coilyco/umbra/http/specverb
 
-package specverb // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/specverb"
+package specverb // import "github.com/coilyco/umbra/http/specverb"
 
 Package specverb is the runtime engine of the spec-driven verb design: it builds
 a guarded cli tree from a Guardfile + spec. See docs/specverb.md.
@@ -1931,9 +1931,9 @@ type VerbInfo struct {
     destructive flag, the grant that authorized it, and the optional human note.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra
+## github.com/coilyco/umbra/http/umbra
 
-package umbra // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra"
+package umbra // import "github.com/coilyco/umbra/http/umbra"
 
 Cache layout and staleness for the out-of-band materialized consumer binary,
 keyed by the Guardfile's location. See docs/specverb.md.
@@ -2069,9 +2069,9 @@ type Options struct {
     Options are the inputs shared by every driver verb.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/codegen
+## github.com/coilyco/umbra/http/umbra/codegen
 
-package codegen // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/codegen"
+package codegen // import "github.com/coilyco/umbra/http/umbra/codegen"
 
 Package codegen renders a complete consumer `main.go` from a KDL Guardfile,
 so a consumer never hand-writes the specverb wiring. See docs/specverb.md.
@@ -2182,9 +2182,9 @@ func PlanSet(gfs []*guardfile.Guardfile, names []string) (SetParams, error)
     merge).
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/embedfile
+## github.com/coilyco/umbra/http/umbra/embedfile
 
-package embedfile // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/embedfile"
+package embedfile // import "github.com/coilyco/umbra/http/umbra/embedfile"
 
 Package embedfile materializes umbra-embedded build inputs for one guarded
 process lifetime.
@@ -2206,9 +2206,9 @@ type Source struct {
     identity and Data is its compile-time content.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/internal/clitrees
+## github.com/coilyco/umbra/internal/clitrees
 
-package clitrees // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/internal/clitrees"
+package clitrees // import "github.com/coilyco/umbra/internal/clitrees"
 
 Package clitrees exports the demo command trees scripts/gen-webdocs renders into
 site/cli/. Compiled by root CI, which is why it is not in that module.
@@ -2226,9 +2226,9 @@ func Policy() *cli.Command
     Policy is the tree for the metacharacter-gate demo.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/internal/umbracli
+## github.com/coilyco/umbra/internal/umbracli
 
-package umbracli // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/internal/umbracli"
+package umbracli // import "github.com/coilyco/umbra/internal/umbracli"
 
 Package umbracli owns the shared command tree behind the canonical umbra binary
 and its temporary kdl-specs compatibility entrypoint.
@@ -2239,9 +2239,9 @@ func Run(ctx context.Context, args []string, stdout, stderr io.Writer) int
     Run executes the umbra command tree and returns its process exit code.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit
+## github.com/coilyco/umbra/pkg/audit
 
-package audit // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
+package audit // import "github.com/coilyco/umbra/pkg/audit"
 
 Package audit writes one JSONL record per CLI invocation to an append-only log
 outside the working tree. Per SECURITY.md, the
@@ -2541,16 +2541,16 @@ func (w *Writer) WrapHook(ctx context.Context, base Record, fn func() error, onC
     fn returns and before the record is appended; it gets a pointer
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit/otelsink
+## github.com/coilyco/umbra/pkg/audit/otelsink
 
-package otelsink // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit/otelsink"
+package otelsink // import "github.com/coilyco/umbra/pkg/audit/otelsink"
 
 Package otelsink emits umbra audit records as OpenTelemetry spans. The
 projection lives in pkg/audit; this binds it to a tracer.
 
 CONSTANTS
 
-const ScopeName = "forgejo.coilysiren.me/coilyco-flight-deck/umbra"
+const ScopeName = "github.com/coilyco/umbra"
     ScopeName is the instrumentation scope every umbra span carries, so a
     collector can select umbra's rows by scope rather than by span name.
 
@@ -2598,9 +2598,9 @@ func (s *Sink) Emit(sp audit.Span)
     opens at the record's start and closes at start+duration rather than now.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/config
+## github.com/coilyco/umbra/pkg/config
 
-package config // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/config"
+package config // import "github.com/coilyco/umbra/pkg/config"
 
 App-dir namespacing. The consumer-supplied directory name (e.g. ward ".ward")
 roots every per-user path; umbra hardcodes no consumer.
@@ -2684,9 +2684,9 @@ func SetAppDir(name string)
     The consumer calls it once at startup - e.g. ward ".ward".
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode
+## github.com/coilyco/umbra/pkg/exitcode
 
-package exitcode // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+package exitcode // import "github.com/coilyco/umbra/pkg/exitcode"
 
 Package exitcode is the public contract for what the process exit code means.
 External consumers (an orchestrator, a CI step, a watchdog)
@@ -2782,9 +2782,9 @@ type Reasoner interface {
     a why-line: a one-sentence statement of the threat or
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/flock
+## github.com/coilyco/umbra/pkg/flock
 
-package flock // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/flock"
+package flock // import "github.com/coilyco/umbra/pkg/flock"
 
 Package flock wraps the BSD advisory whole-file lock (flock(2)) so a consumer
 can serialise mutually-exclusive work across processes that share a lock file -
@@ -2816,9 +2816,9 @@ func Unlock(f *os.File) error
     holds no lock is harmless. Non-unix returns ErrUnsupported.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpapps
+## github.com/coilyco/umbra/pkg/mcpapps
 
-package mcpapps // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpapps"
+package mcpapps // import "github.com/coilyco/umbra/pkg/mcpapps"
 
 Package mcpapps is the MCP Apps host bridge: the frame-level half of a terminal
 or embedded host that renders an MCP App and answers the calls that App makes
@@ -3045,9 +3045,9 @@ type Session interface {
     *mcpclient.Session a view can reach, which that type already satisfies.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient
+## github.com/coilyco/umbra/pkg/mcpclient
 
-package mcpclient // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+package mcpclient // import "github.com/coilyco/umbra/pkg/mcpclient"
 
 Package mcpclient is the Model Context Protocol client umbra's mcp dialect
 speaks: one declared upstream server, a session over it, and the three calls the
@@ -3187,9 +3187,9 @@ type Tool struct {
     than the SDK's so the lock format does not move when the SDK does.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/negcontrol
+## github.com/coilyco/umbra/pkg/negcontrol
 
-package negcontrol // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/negcontrol"
+package negcontrol // import "github.com/coilyco/umbra/pkg/negcontrol"
 
 Package negcontrol is the shared result of a negative control, which the
 dialects produce and the umbra driver reports. See docs/negative-controls.md.
@@ -3237,9 +3237,9 @@ type Outcome struct {
 func (o Outcome) String() string
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/policy
+## github.com/coilyco/umbra/pkg/policy
 
-package policy // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/policy"
+package policy // import "github.com/coilyco/umbra/pkg/policy"
 
 Package policy validates that verb arguments do not contain shell
 metacharacters. Per SECURITY.md, the consumer's subprocess execution
@@ -3273,9 +3273,9 @@ func ValidateArgs(args map[string]string) error
     Convenience for Action funcs that have already gathered flag values.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/scope
+## github.com/coilyco/umbra/pkg/scope
 
-package scope // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/scope"
+package scope // import "github.com/coilyco/umbra/pkg/scope"
 
 Package scope resolves cwd to its git toplevel for an audit record's RepoRoot.
 Best-effort and forensic-only: outside a repo it yields "".
@@ -3292,9 +3292,9 @@ func RepoRoot(cwd string) string
     umbra#7343.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/skillgen
+## github.com/coilyco/umbra/pkg/skillgen
 
-package skillgen // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/skillgen"
+package skillgen // import "github.com/coilyco/umbra/pkg/skillgen"
 
 Package skillgen renders an urfave/cli v3 command tree into agent-facing
 discovery artifacts without making those artifacts runtime authority.
@@ -3331,9 +3331,9 @@ type Entry struct {
     Entry is one reachable leaf in the structured YAML command index.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/stepflow
+## github.com/coilyco/umbra/pkg/stepflow
 
-package stepflow // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/stepflow"
+package stepflow // import "github.com/coilyco/umbra/pkg/stepflow"
 
 Package stepflow executes transport-agnostic ordered step sequences.
 A dialect resolves its authorized leaves into Steps and supplies a Runner;
@@ -3422,9 +3422,9 @@ type Step struct {
     available to later arguments as `$as.field`.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/tokenmint
+## github.com/coilyco/umbra/pkg/tokenmint
 
-package tokenmint // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/tokenmint"
+package tokenmint // import "github.com/coilyco/umbra/pkg/tokenmint"
 
 Package tokenmint resolves a value that has to be MINTED rather than read.
 Every valuesource provider reads a secret that already exists; an OAuth
@@ -3473,9 +3473,9 @@ func (r *Registry) Provider() valuesource.Provider
     a CLIENT NAME, so a guardfile carries no endpoint and no credential.
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/ttlcache
+## github.com/coilyco/umbra/pkg/ttlcache
 
-package ttlcache // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/ttlcache"
+package ttlcache // import "github.com/coilyco/umbra/pkg/ttlcache"
 
 Package ttlcache is a small on-disk key/value cache with per-entry TTLs.
 Built for the consumer after the lockdown inversion: every aws / kubectl / gh
@@ -3513,9 +3513,9 @@ func (c *Cache) Set(key string, value []byte, ttl time.Duration) error
     filesystem error if the write fails; callers can ignore it (the next
 
 
-## forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource
+## github.com/coilyco/umbra/pkg/valuesource
 
-package valuesource // import "forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+package valuesource // import "github.com/coilyco/umbra/pkg/valuesource"
 
 Package valuesource is umbra's shared value-resolution layer: a Provider reads a
 named address at request time, so neither engine imports a store SDK.

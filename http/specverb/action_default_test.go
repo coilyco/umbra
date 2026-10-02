@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/exitcode"
 	"github.com/urfave/cli/v3"
 )
 
@@ -24,7 +24,7 @@ func ciWatchDefaultGuardfile(t *testing.T) *guardfile.Guardfile {
 	t.Helper()
 	src := []byte("wrap ward ops forgejo {\n" +
 		"    spec forgejo.swagger.v1.json\n" +
-		"    base-url \"https://forgejo.coilysiren.me/api/v1\"\n" +
+		"    base-url \"https://forgejo.example/api/v1\"\n" +
 		"    auth header-token { header Authorization; prefix \"token \"; value ssm \"/forgejo/api-token\" }\n" +
 		"    can list tasks { op \"ListActionTasks\" }\n" +
 		"    action ci-watch {\n" +

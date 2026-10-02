@@ -7,9 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // rawLogOp wires a GET leaf whose spec declared a non-JSON success media type,

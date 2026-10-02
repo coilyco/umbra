@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/execverb"
+	"github.com/coilyco/umbra/cli/execverb"
 )
 
 // occluded returns the tool name this group's replacement stands in front of,
