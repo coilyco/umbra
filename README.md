@@ -2,7 +2,7 @@
 
 occlusion for agent CLIs and APIs
 
-![umbra - a config driven occlusion framework](assets/banner/umbra.jpg)
+![umbra - occlusion for agent CLIs and APIs](assets/banner/umbra.jpg)
 
 Occlusion is the idea. umbra is a least-privilege boundary between an agent and
 the host system, and what you did not declare does not get through. The boundary

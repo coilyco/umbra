@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-label="umbra">
-  <title>umbra</title>
-  <desc>Four uneven strips laid over a lit opening, with a pair of slits cut into the deepest one.</desc>
-  <defs><clipPath id="form"><path d="M5 5 H11 L12.5 6.5 V9.5 L11 11 H5 L3.5 9.5 V6.5 Z"/></clipPath></defs>
-  <rect width="16" height="16" fill="#080711"/>
-
-
-  <path d="M5 5 H11 L12.5 6.5 V9.5 L11 11 H5 L3.5 9.5 V6.5 Z" fill="#6a3bf2"/>
-  <g clip-path="url(#form)"><rect x="2.5" y="9" width="11.5" height="3" fill="#080711"/><rect x="3.5" y="10" width="9.5" height="1" fill="#fb6e00"/><rect x="10.5" y="4" width="3" height="8" fill="#080711"/><rect x="11.5" y="5" width="1" height="6" fill="#fb6e00"/><rect x="2.5" y="4" width="11.5" height="4" fill="#080711"/><rect x="3.5" y="5" width="9.5" height="2" fill="#fb6e00"/><rect x="2.5" y="4" width="4" height="8" fill="#080711"/><rect x="3.5" y="5" width="2" height="6" fill="#fb6e00"/></g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><defs><clipPath id="c"><circle cx="8" cy="8" r="8"/></clipPath></defs><circle cx="8" cy="8" r="8" fill="#030307"/><g clip-path="url(#c)" shape-rendering="crispEdges"><path d="M3 8L3 3L7 6ZM13 8L13 3L9 6Z" fill="#393755"/><rect x="3" y="6" width="10" height="8" rx="3" fill="#393755"/><rect x="4" y="8" width="2" height="2" fill="#fb6e00"/><rect x="10" y="8" width="2" height="2" fill="#fb6e00"/></g></svg>

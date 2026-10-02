@@ -1,10 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="umbra">
-  <title>umbra</title>
-  <desc>Four uneven strips laid over a lit opening, with a pair of slits cut into the deepest one.</desc>
-  <defs><clipPath id="form"><path d="M19.5 20 H44.5 L50.5 26 V38 L44.5 44 H19.5 L13.5 38 V26 Z"/></clipPath></defs>
-  <rect width="64" height="64" fill="#080711"/>
-
-
-  <path d="M19.5 20 H44.5 L50.5 26 V38 L44.5 44 H19.5 L13.5 38 V26 Z" fill="#6a3bf2"/>
-  <g clip-path="url(#form)"><rect x="11.5" y="37.5" width="41" height="9" fill="#080711"/><rect x="13.5" y="39.5" width="37" height="5" fill="#fb6e00"/><rect x="44.5" y="18" width="8" height="28.5" fill="#080711"/><rect x="46.5" y="20" width="4" height="24.5" fill="#fb6e00"/><rect x="11.5" y="18" width="41" height="12" fill="#080711"/><rect x="13.5" y="20" width="37" height="8" fill="#fb6e00"/><rect x="11.5" y="18" width="11.5" height="28.5" fill="#080711"/><rect x="13.5" y="20" width="7.5" height="24.5" fill="#fb6e00"/><path d="M24 23 H29 L31 25 H24 Z" fill="#080711"/><path d="M40 23 H35 L33 25 H40 Z" fill="#080711"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="4 4 192 192" width="64" height="64"><defs><linearGradient id="fur" gradientUnits="userSpaceOnUse" x1="0" y1="30" x2="0" y2="180"><stop offset="0" stop-color="#1c1a32"/><stop offset=".55" stop-color="#121022"/><stop offset="1" stop-color="#080711"/></linearGradient><radialGradient id="glow-r2-a"><stop offset="0" stop-color="#fb6e00" stop-opacity="0.55"/><stop offset=".55" stop-color="#fb6e00" stop-opacity="0.21"/><stop offset="1" stop-color="#fb6e00" stop-opacity="0"/></radialGradient></defs>
+<defs><clipPath id="coin-r2-a"><circle cx="100" cy="100" r="96"/></clipPath><g id="sil-r2-a"><g transform="translate(100 132) scale(1.3) translate(-100 -132)"><circle cx="100" cy="108" r="32" stroke="none"/><path d="M72 92L66 60L94 76Z M128 92L134 60L106 76Z" stroke="none"/></g></g></defs>
+<circle cx="100" cy="100" r="96" fill="#030307"/>
+<g clip-path="url(#coin-r2-a)"><circle cx="100" cy="104" r="90" fill="url(#glow-r2-a)"/>
+<use href="#sil-r2-a" fill="#393755" stroke="#393755" transform="translate(0 -2)"/>
+<use href="#sil-r2-a" fill="url(#fur)" stroke="url(#fur)"/>
+<rect x="28" y="132" width="144" height="24" rx="7" fill="#2b2844"/><rect x="28" y="132" width="144" height="5" rx="2.5" fill="#393755"/><g transform="translate(100 132) scale(1.3) translate(-100 -132)"><ellipse cx="80" cy="131" rx="13" ry="6" fill="#121022"/><ellipse cx="120" cy="131" rx="13" ry="6" fill="#121022"/></g><g transform="translate(100 132) scale(1.3) translate(-100 -132)"><circle cx="87" cy="106" r="9.5" fill="#fb6e00"/><ellipse cx="87" cy="106" rx="4.2" ry="7" fill="#030307"/><circle cx="113" cy="106" r="9.5" fill="#fb6e00"/><ellipse cx="113" cy="106" rx="4.2" ry="7" fill="#030307"/></g></g>
+<circle cx="100" cy="100" r="95" fill="none" stroke="#2b2844" stroke-width="2"/>
 </svg>
