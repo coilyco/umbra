@@ -130,30 +130,16 @@ jobs:
           TAG: ${{ steps.tag.outputs.new_tag }}
         run: bash scripts/ci/update-scoop-bucket.sh
 
-      - name: Alert Telegram on release failure
+      - name: Alert Sentry on release failure
         if: ${{ failure() && github.ref == 'refs/heads/release' }}
+        continue-on-error: true
         env:
-          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.TELEGRAM_RED_CHAT_ID }}
-          REPO: ${{ github.repository }}
-          WORKFLOW: ${{ github.workflow }}
-          JOB: ${{ github.job }}
-          REF: ${{ github.ref }}
-          SHA: ${{ github.sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          API_BASE: https://api.telegram.org
-        run: python3 scripts/ci/telegram-alert-release.py
-      - name: Alert Telegram on main failure
+          ALERT_KIND: Release
+          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
+        run: python3 scripts/alert_sentry.py
+      - name: Alert Sentry on main failure
         if: ${{ failure() && github.ref == 'refs/heads/main' }}
         continue-on-error: true
         env:
-          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.TELEGRAM_RED_CHAT_ID }}
-          REPO: ${{ github.repository }}
-          WORKFLOW: ${{ github.workflow }}
-          JOB: ${{ github.job }}
-          REF: ${{ github.ref }}
-          SHA: ${{ github.sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          API_BASE: https://api.telegram.org
-        run: python3 scripts/ci/telegram-alert.py
+          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
+        run: python3 scripts/alert_sentry.py

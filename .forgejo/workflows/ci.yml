@@ -32,20 +32,12 @@ jobs:
       - name: go.mod tidy
         run: bash scripts/ci/go-mod-tidy.sh
 
-      - name: Alert Telegram on main failure
+      - name: Alert Sentry on main failure
         if: ${{ failure() && github.ref == 'refs/heads/main' }}
         continue-on-error: true
         env:
-          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.TELEGRAM_RED_CHAT_ID }}
-          REPO: ${{ github.repository }}
-          WORKFLOW: ${{ github.workflow }}
-          JOB: ${{ github.job }}
-          REF: ${{ github.ref }}
-          SHA: ${{ github.sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          API_BASE: https://api.telegram.org
-        run: python3 scripts/ci/telegram-alert.py
+          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
+        run: python3 scripts/alert_sentry.py
   lint:
     runs-on: docker
     container: forgejo.coilysiren.me/coilyco-flight-deck/agentic-os:release
@@ -56,20 +48,12 @@ jobs:
       - name: golangci-lint
         run: golangci-lint run --timeout=5m --concurrency=1 ./...
 
-      - name: Alert Telegram on main failure
+      - name: Alert Sentry on main failure
         if: ${{ failure() && github.ref == 'refs/heads/main' }}
         continue-on-error: true
         env:
-          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.TELEGRAM_RED_CHAT_ID }}
-          REPO: ${{ github.repository }}
-          WORKFLOW: ${{ github.workflow }}
-          JOB: ${{ github.job }}
-          REF: ${{ github.ref }}
-          SHA: ${{ github.sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          API_BASE: https://api.telegram.org
-        run: python3 scripts/ci/telegram-alert.py
+          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
+        run: python3 scripts/alert_sentry.py
   secrets:
     runs-on: docker
     container: forgejo.coilysiren.me/coilyco-flight-deck/agentic-os:release
@@ -80,17 +64,9 @@ jobs:
           persist-credentials: false
       - name: Scan filesystem for secrets
         run: bash scripts/ci/trufflehog-scan.sh
-      - name: Alert Telegram on main failure
+      - name: Alert Sentry on main failure
         if: ${{ failure() && github.ref == 'refs/heads/main' }}
         continue-on-error: true
         env:
-          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          CHAT_ID: ${{ secrets.TELEGRAM_RED_CHAT_ID }}
-          REPO: ${{ github.repository }}
-          WORKFLOW: ${{ github.workflow }}
-          JOB: ${{ github.job }}
-          REF: ${{ github.ref }}
-          SHA: ${{ github.sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          API_BASE: https://api.telegram.org
-        run: python3 scripts/ci/telegram-alert.py
+          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
+        run: python3 scripts/alert_sentry.py
