@@ -24,13 +24,6 @@ jobs:
         run: go test -race -count=1 ./...
       - name: godoc-current.txt up to date
         run: ./scripts/check-godoc-current.sh
-
-      - name: Alert Sentry on main failure
-        if: ${{ failure() && github.ref == 'refs/heads/main' }}
-        continue-on-error: true
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
-        run: python3 scripts/alert_sentry.py
   lint:
     runs-on: ubuntu-latest
     container: forgejo.coilysiren.me/coilyco-flight-deck/agentic-os:release
@@ -40,13 +33,6 @@ jobs:
         run: bash scripts/ci/go-scratch.sh
       - name: golangci-lint
         run: golangci-lint run --timeout=5m --concurrency=1 ./...
-
-      - name: Alert Sentry on main failure
-        if: ${{ failure() && github.ref == 'refs/heads/main' }}
-        continue-on-error: true
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
-        run: python3 scripts/alert_sentry.py
   govulncheck:
     runs-on: ubuntu-latest
     container: forgejo.coilysiren.me/coilyco-flight-deck/agentic-os:release
@@ -56,10 +42,3 @@ jobs:
         run: bash scripts/ci/go-scratch.sh
       - name: govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest && govulncheck ./...
-
-      - name: Alert Sentry on main failure
-        if: ${{ failure() && github.ref == 'refs/heads/main' }}
-        continue-on-error: true
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
-        run: python3 scripts/alert_sentry.py

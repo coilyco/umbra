@@ -33,9 +33,3 @@ jobs:
       - uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
-      - name: Alert Sentry on main failure
-        if: ${{ failure() && github.ref == 'refs/heads/main' }}
-        continue-on-error: true
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_CI_DSN }}
-        run: python3 scripts/alert_sentry.py
