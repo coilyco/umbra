@@ -116,6 +116,10 @@ jobs:
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra.json
 
+      - name: Wait for the GitHub mirror to copy the release assets
+        if: ${{ steps.tag.outputs.new_tag != '' }}
+        run: bash scripts/ci/wait-github-assets.sh dist
+
       - name: Update the Homebrew tap
         if: ${{ steps.tag.outputs.new_tag != '' }}
         env:

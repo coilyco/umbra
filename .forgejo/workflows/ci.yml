@@ -31,6 +31,8 @@ jobs:
         run: ./scripts/check-godoc-current.sh
       - name: go.mod tidy
         run: bash scripts/ci/go-mod-tidy.sh
+      - name: Release asset wait behaves
+        run: bash scripts/ci/test-wait-github-assets.sh
 
       - name: Alert Sentry on main failure
         if: ${{ failure() && github.ref == 'refs/heads/main' }}
