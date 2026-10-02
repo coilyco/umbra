@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/stepflow"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/pkg/stepflow"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/urfave/cli/v3"
 )

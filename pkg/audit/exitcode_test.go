@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // wrapOnce runs one recorded invocation returning err and reads the row back.

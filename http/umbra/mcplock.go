@@ -7,11 +7,11 @@ import (
 	"sort"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/mcpverb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/mcpverb"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // mcpLockTimeout bounds the one online step an mcp member takes. A stdio server

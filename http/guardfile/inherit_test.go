@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // writeGuardfile drops src at dir/name and returns the path.
@@ -30,7 +30,7 @@ func grantSet(gf *guardfile.Guardfile) map[string]bool {
 
 const readTier = `wrap ward-kdl ops forgejo {
     spec forgejo.swagger.v1.json
-    base-url "https://forgejo.coilysiren.me/api/v1"
+    base-url "https://forgejo.example/api/v1"
     auth header-token {
         header Authorization
         prefix "token "
@@ -75,7 +75,7 @@ func TestInheritLayeredChain(t *testing.T) {
 	if gf.Spec != "forgejo.swagger.v1.json" {
 		t.Errorf("inherited spec = %q, want forgejo.swagger.v1.json", gf.Spec)
 	}
-	if gf.BaseURL != "https://forgejo.coilysiren.me/api/v1" {
+	if gf.BaseURL != "https://forgejo.example/api/v1" {
 		t.Errorf("inherited base-url = %q", gf.BaseURL)
 	}
 	if gf.Auth.Scheme != "header-token" || gf.Auth.Value.String() != "ssm /forgejo/api-token" {

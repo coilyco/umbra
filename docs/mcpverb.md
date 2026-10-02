@@ -73,7 +73,7 @@ Every tool input is a flag, typed from the locked input schema, sorted by name s
 
 A stdio upstream takes its secrets through `env`, never `argv`, because argv is readable by any local process. An http upstream uses the ordinary `auth` block, `header-token` or `bearer`. Both stay symbolic in the parse and resolve per call, so a rotated credential needs no rebuild.
 
-**umbra reads a token, it does not go and get one.** MCP's own auth story is OAuth 2.1 `authorization_code` with a browser round-trip and refresh-token storage, and umbra has neither an interactive flow nor anywhere to keep a rotating secret. Any upstream whose credential is already a value somewhere works today. One that only offers the browser flow needs a token minted outside and named through a value chain. [umbra#340](https://forgejo.coilysiren.me/coilyco-flight-deck/umbra/issues/340) holds that decision.
+**umbra reads a token, it does not go and get one.** MCP's own auth story is OAuth 2.1 `authorization_code` with a browser round-trip and refresh-token storage, and umbra has neither an interactive flow nor anywhere to keep a rotating secret. Any upstream whose credential is already a value somewhere works today. One that only offers the browser flow needs a token minted outside and named through a value chain. [umbra#340](https://github.com/coilyco/umbra/issues/340) holds that decision.
 
 So a refusal says which of the two it is, rather than the SDK's bare `Unauthorized`:
 
@@ -94,7 +94,7 @@ Each invocation opens a session and closes it, so there is no keep-alive daemon 
 
 ## What this is not
 
-There is no OAuth browser flow, no editor config import, and no aggregating proxy: those are [umbra#336](https://forgejo.coilysiren.me/coilyco-flight-deck/umbra/issues/336)'s deliberate non-goals.
+There is no OAuth browser flow, no editor config import, and no aggregating proxy: those are [umbra#336](https://github.com/coilyco/umbra/issues/336)'s deliberate non-goals.
 
 ## See also
 

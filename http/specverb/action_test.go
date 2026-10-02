@@ -13,10 +13,10 @@ import (
 	"testing"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/exitcode"
 	"github.com/urfave/cli/v3"
 )
 
@@ -26,7 +26,7 @@ func ciWatchGuardfile(t *testing.T) *guardfile.Guardfile {
 	t.Helper()
 	src := []byte("wrap ward ops forgejo {\n" +
 		"    spec forgejo.swagger.v1.json\n" +
-		"    base-url \"https://forgejo.coilysiren.me/api/v1\"\n" +
+		"    base-url \"https://forgejo.example/api/v1\"\n" +
 		"    auth header-token { header Authorization; prefix \"token \"; value ssm \"/forgejo/api-token\" }\n" +
 		"    can list tasks { op \"ListActionTasks\" }\n" +
 		"    action ci-watch {\n" +
@@ -235,7 +235,7 @@ func metacharActionGuardfile(t *testing.T) *guardfile.Guardfile {
 	t.Helper()
 	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
 		spec forgejo.swagger.v1.json
-		base-url "https://forgejo.coilysiren.me/api/v1"
+		base-url "https://forgejo.example/api/v1"
 		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 		can create issue { op "issueCreateIssue" }
 		action file {
@@ -353,7 +353,7 @@ func labelArrayGuardfile(t *testing.T) *guardfile.Guardfile {
 	t.Helper()
 	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
 		spec forgejo.swagger.v1.json
-		base-url "https://forgejo.coilysiren.me/api/v1"
+		base-url "https://forgejo.example/api/v1"
 		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 		can create issue { op "issueCreateIssue" }
 		action create issue {
@@ -448,7 +448,7 @@ func TestActionRequiredFlagRefusesBeforeTheWrite(t *testing.T) {
 func TestActionArrayInputRejectedOnCollect(t *testing.T) {
 	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
 		spec forgejo.swagger.v1.json
-		base-url "https://forgejo.coilysiren.me/api/v1"
+		base-url "https://forgejo.example/api/v1"
 		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 		can list issues { op "issueListIssues" }
 		action sweep {
@@ -485,7 +485,7 @@ func labelCompositionGuardfile(t *testing.T) *guardfile.Guardfile {
 	t.Helper()
 	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
 		spec forgejo.swagger.v1.json
-		base-url "https://forgejo.coilysiren.me/api/v1"
+		base-url "https://forgejo.example/api/v1"
 		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 		can add issue-label { op "issueAddLabel" }
 		action label {
@@ -604,7 +604,7 @@ func optionalArgGuardfile(t *testing.T) *guardfile.Guardfile {
 	t.Helper()
 	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
 		spec forgejo.swagger.v1.json
-		base-url "https://forgejo.coilysiren.me/api/v1"
+		base-url "https://forgejo.example/api/v1"
 		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 		can create issue { op "issueCreateIssue" }
 		action create issue {

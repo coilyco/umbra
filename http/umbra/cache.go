@@ -12,7 +12,7 @@ import (
 	"sort"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/config"
+	"github.com/coilyco/umbra/pkg/config"
 )
 
 // cacheSubdir namespaces the specverb caches under the framework cache root, so

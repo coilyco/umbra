@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/respfmt"
 	kdl "github.com/calico32/kdl-go"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/respfmt"
 )
 
 // ParseInline states the ward-mcp inline grammar as the same []Descriptor the

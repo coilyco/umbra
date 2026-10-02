@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/skillgen"
+	"github.com/coilyco/umbra/pkg/skillgen"
 	"github.com/urfave/cli/v3"
 	"gopkg.in/yaml.v3"
 )

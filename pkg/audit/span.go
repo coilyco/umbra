@@ -5,7 +5,7 @@ package audit
 import (
 	"strconv"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // Span attribute keys, namespaced so a collector can select umbra's rows

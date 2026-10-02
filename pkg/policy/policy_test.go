@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/policy"
+	"github.com/coilyco/umbra/pkg/policy"
 )
 
 func TestValidateArg_AcceptsSafeStrings(t *testing.T) {

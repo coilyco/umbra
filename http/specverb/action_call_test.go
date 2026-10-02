@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // callActionGuardfile grants issue create + close and declares a two-step call
@@ -19,7 +19,7 @@ func callActionGuardfile(t *testing.T) *guardfile.Guardfile {
 	t.Helper()
 	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
 		spec forgejo.swagger.v1.json
-		base-url "https://forgejo.coilysiren.me/api/v1"
+		base-url "https://forgejo.example/api/v1"
 		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 		can create issue { op "issueCreateIssue" }
 		can close issue { op "issueEditIssue"; body state="closed" }
@@ -107,7 +107,7 @@ func TestCallActionDryRunPlan(t *testing.T) {
 	if plan.Action != "seal" || len(plan.Calls) != 2 {
 		t.Fatalf("plan = %+v", plan)
 	}
-	if plan.Calls[0]["url"] != "https://forgejo.coilysiren.me/api/v1/repos/kai/demo/issues" {
+	if plan.Calls[0]["url"] != "https://forgejo.example/api/v1/repos/kai/demo/issues" {
 		t.Errorf("first call url = %v", plan.Calls[0]["url"])
 	}
 }

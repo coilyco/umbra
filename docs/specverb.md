@@ -15,7 +15,7 @@ The engine carries no upstream knowledge, so one drives every spec.
 ```kdl
 wrap ward ops forgejo {
     spec forgejo.swagger.v1.json
-    base-url "forgejo.coilysiren.me/api/v1"
+    base-url "forgejo.example/api/v1"
     auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 
     can get repo                          // convention: GET /repos/{owner}/{repo}

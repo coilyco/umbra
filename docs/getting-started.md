@@ -9,13 +9,13 @@ refusal at the bottom so you have watched the boundary hold once.
 CLI, with no hand-written Go.
 
 ```sh
-brew tap coilyco-flight-deck/tap https://forgejo.coilysiren.me/coilyco-flight-deck/homebrew-tap
-brew install coilyco-flight-deck/tap/umbra
+brew tap coilyco/tap
+brew install coilyco/tap/umbra
 ```
 
 ```powershell
-scoop bucket add coilyco-flight-deck https://forgejo.coilysiren.me/coilyco-flight-deck/scoop-bucket
-scoop install coilyco-flight-deck/umbra
+scoop bucket add coilyco https://github.com/coilyco/scoop-bucket
+scoop install coilyco/umbra
 ```
 
 Tagged releases also publish raw binaries and `SHA256SUMS` for Linux, macOS, and
@@ -28,7 +28,7 @@ Every package stands alone if you are adding a boundary to an existing
 [urfave/cli](https://github.com/urfave/cli) v3 app.
 
 ```sh
-GOPRIVATE=forgejo.coilysiren.me go get forgejo.coilysiren.me/coilyco-flight-deck/umbra
+go get github.com/coilyco/umbra
 ```
 
 ## See a refusal

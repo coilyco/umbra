@@ -4,7 +4,7 @@
 
 ```kdl
 wrap ward mcp forgejo {
-    base-url "forgejo.coilysiren.me/api/v1"   // or a { value } block
+    base-url "forgejo.example/api/v1"   // or a { value } block
     auth header-token { header "Authorization"; prefix "token "; value env "TOK" }
     restrict owner matches "coilyco-*"         // wrap-level, fail-closed
     can create issue {

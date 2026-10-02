@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
 	kdl "github.com/calico32/kdl-go"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // UpstreamNode is the top-level node of an upstream guardfile, a sibling of

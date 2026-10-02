@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/respfmt"
+	"github.com/coilyco/umbra/http/respfmt"
 )
 
 func TestRender_DefaultsToYAML(t *testing.T) {

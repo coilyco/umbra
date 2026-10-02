@@ -10,8 +10,8 @@ import (
 	"reflect"
 	"strconv"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/respfmt"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/http/respfmt"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // Operation is one resolved leaf plus the runtime that fires it: the unit a

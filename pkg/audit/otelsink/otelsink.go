@@ -6,7 +6,7 @@ import (
 	"context"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/audit"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -14,7 +14,7 @@ import (
 
 // ScopeName is the instrumentation scope every umbra span carries, so a
 // collector can select umbra's rows by scope rather than by span name.
-const ScopeName = "forgejo.coilysiren.me/coilyco-flight-deck/umbra"
+const ScopeName = "github.com/coilyco/umbra"
 
 // Sink emits one span per appended audit record.
 type Sink struct {

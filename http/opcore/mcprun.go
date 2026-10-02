@@ -7,9 +7,9 @@ import (
 	"sort"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 )
 
 // MCPCall marks a leaf of the mcp dialect: the exact upstream tool it fires and

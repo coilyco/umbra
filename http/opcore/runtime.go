@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // Provider resolves the value at address for one named value source: the shared
@@ -230,7 +230,7 @@ func (rt *Runtime) FireCaptureRaw(ctx context.Context, method, url string, body 
 
 // DefaultUserAgent names this client when nothing else does. Go's default is
 // refused outright by some APIs; see docs/specverb-request.md (umbra#303).
-const DefaultUserAgent = "umbra/1.0 (+https://github.com/coilyco-flight-deck/umbra)"
+const DefaultUserAgent = "umbra/1.0 (+https://github.com/coilyco/umbra)"
 
 // send performs the request and returns the success body. It never inspects the
 // payload, so a plaintext log or a ZIP survives it intact.

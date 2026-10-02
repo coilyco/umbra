@@ -6,13 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/opcore"
 )
 
 // inlineSrc is a full ward-mcp inline source exercising the frozen grammar: wrap
 // header, base-url, auth, restrict, and three ops (create, a `set` toggle, delete).
 const inlineSrc = `wrap ward mcp forgejo {
-    base-url "forgejo.coilysiren.me/api/v1"
+    base-url "forgejo.example/api/v1"
     auth header-token {
         header "Authorization"
         prefix "token "
@@ -573,7 +573,7 @@ func TestParseInlineDestructiveDelete(t *testing.T) {
 
 func TestParseInlineRuntimeConfig(t *testing.T) {
 	_, cfg := parseInline(t, inlineSrc)
-	if cfg.BaseURL != "forgejo.coilysiren.me/api/v1" {
+	if cfg.BaseURL != "forgejo.example/api/v1" {
 		t.Errorf("base-url = %q", cfg.BaseURL)
 	}
 	if cfg.Auth.Scheme != "header-token" || cfg.Auth.Header != "Authorization" || cfg.Auth.Prefix != "token " {

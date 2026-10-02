@@ -5,7 +5,7 @@ import (
 	"context"
 	"os"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/internal/umbracli"
+	"github.com/coilyco/umbra/internal/umbracli"
 )
 
 func main() {

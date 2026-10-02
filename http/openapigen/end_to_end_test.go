@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/openapigen"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/specverb"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/openapigen"
+	"github.com/coilyco/umbra/http/specverb"
 )
 
 // TestEmitFromARealGuardfile drives the whole path a caller uses: a committed
@@ -61,7 +61,7 @@ func TestEmitFromARealGuardfile(t *testing.T) {
 	if doc.OpenAPI != openapigen.Version {
 		t.Errorf("openapi = %q, want %q", doc.OpenAPI, openapigen.Version)
 	}
-	if len(doc.Servers) != 1 || doc.Servers[0].URL != "https://forgejo.coilysiren.me/api/v1" {
+	if len(doc.Servers) != 1 || doc.Servers[0].URL != "https://forgejo.example/api/v1" {
 		t.Errorf("servers = %v, want the guardfile base-url", doc.Servers)
 	}
 

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/opcore"
 )
 
 // ServedTool is one granted tool as a server would advertise it, plus the

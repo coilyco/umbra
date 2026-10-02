@@ -2,7 +2,7 @@
 
 Each invocation of a generated binary opens a session to the upstream and closes it. There is no keep-alive daemon, and a stdio child never outlives the call that wanted it.
 
-[umbra#336](https://forgejo.coilysiren.me/coilyco-flight-deck/umbra/issues/336) deferred that daemon on the condition the cost be measured first. It was, in [umbra#338](https://forgejo.coilysiren.me/coilyco-flight-deck/umbra/issues/338), and the daemon is not warranted.
+[umbra#336](https://github.com/coilyco/umbra/issues/336) deferred that daemon on the condition the cost be measured first. It was, in [umbra#338](https://github.com/coilyco/umbra/issues/338), and the daemon is not warranted.
 
 ## Measured
 

@@ -11,9 +11,9 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/cli/verb"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/audit"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/cli/verb"
+	"github.com/coilyco/umbra/pkg/audit"
+	"github.com/coilyco/umbra/pkg/exitcode"
 )
 
 // umbra#7329: audit derives decision=reject from PolicyDenied alone, so every

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpapps"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/pkg/mcpapps"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

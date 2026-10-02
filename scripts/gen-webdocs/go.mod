@@ -1,11 +1,11 @@
 // Separate module so the runtime library does not pull cli-web-docs
 // (and its goldmark/cli-docs deps) into the parent go.mod.
-module forgejo.coilysiren.me/coilyco-flight-deck/umbra/scripts/gen-webdocs
+module github.com/coilyco/umbra/scripts/gen-webdocs
 
 go 1.25.5
 
 require (
-	forgejo.coilysiren.me/coilyco-flight-deck/umbra v0.0.0-00010101000000-000000000000
+	github.com/coilyco/umbra v0.0.0-00010101000000-000000000000
 	github.com/coilysiren/cli-web-docs v0.0.0-20260513172246-d202b1f723a1
 	github.com/urfave/cli/v3 v3.9.0
 )
@@ -18,4 +18,4 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )
 
-replace forgejo.coilysiren.me/coilyco-flight-deck/umbra => ../..
+replace github.com/coilyco/umbra => ../..

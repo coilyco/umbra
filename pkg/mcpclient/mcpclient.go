@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/policy"
+	"github.com/coilyco/umbra/pkg/policy"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 

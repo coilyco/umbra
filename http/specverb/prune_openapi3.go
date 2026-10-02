@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 	"github.com/getkin/kin-openapi/openapi3"
 )
 

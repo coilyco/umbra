@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/mcpverb"
+	"github.com/coilyco/umbra/http/mcpverb"
 )
 
 const upstreamFull = `

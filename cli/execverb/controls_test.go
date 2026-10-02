@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/negcontrol"
+	"github.com/coilyco/umbra/pkg/negcontrol"
 )
 
 func controlsFor(t *testing.T, src string) []negcontrol.Control {

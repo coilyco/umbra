@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/config"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/scope"
+	"github.com/coilyco/umbra/pkg/config"
+	"github.com/coilyco/umbra/pkg/scope"
 )
 
 // TestMain pins an app dir so the WARD_CACHE_DIR override the subtests set

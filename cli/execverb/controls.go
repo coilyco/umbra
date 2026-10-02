@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/negcontrol"
+	"github.com/coilyco/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/negcontrol"
 	"github.com/urfave/cli/v3"
 )
 

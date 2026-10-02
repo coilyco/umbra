@@ -8,9 +8,9 @@ import (
 	"os"
 	"sort"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/openapigen"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/specverb"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/openapigen"
+	"github.com/coilyco/umbra/http/specverb"
 )
 
 // OpenAPI writes an OpenAPI document describing the group's granted HTTP

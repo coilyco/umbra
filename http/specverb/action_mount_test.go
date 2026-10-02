@@ -9,7 +9,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // mountActionGuardfile shadows the generated `repo get` leaf with a two-call
@@ -18,7 +18,7 @@ func mountActionGuardfile(t *testing.T) *guardfile.Guardfile {
 	t.Helper()
 	gf, err := guardfile.Parse([]byte(`wrap ward ops forgejo {
 		spec forgejo.swagger.v1.json
-		base-url "https://forgejo.coilysiren.me/api/v1"
+		base-url "https://forgejo.example/api/v1"
 		auth header-token { header Authorization; prefix "token "; value ssm "/forgejo/api-token" }
 		can get repo { op "repoGet" }
 		can list issue { op "issueListIssues" }

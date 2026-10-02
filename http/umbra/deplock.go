@@ -24,7 +24,7 @@ const depLockVersion = 2
 
 // cliGuardModule is the framework's own module path. The driver is part of
 // umbra, so it pins this module into every consumer's build.
-const cliGuardModule = "forgejo.coilysiren.me/coilyco-flight-deck/umbra"
+const cliGuardModule = "github.com/coilyco/umbra"
 
 // buildModule is the throwaway local module path the cache dir builds under;
 // it never resolves over the network, so the name is arbitrary but stable.

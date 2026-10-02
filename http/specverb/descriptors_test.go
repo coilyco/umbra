@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/guardfile"
 )
 
 // loadProvingGuardfile parses a testdata Guardfile and the spec it names.
@@ -93,7 +93,7 @@ func TestDescriptorsRuntimeConfigMirrorsTheGuardfile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Descriptors: %v", err)
 	}
-	if rt.BaseURL != "https://forgejo.coilysiren.me/api/v1" {
+	if rt.BaseURL != "https://forgejo.example/api/v1" {
 		t.Errorf("BaseURL = %q", rt.BaseURL)
 	}
 	if rt.Auth.Header != "Authorization" {

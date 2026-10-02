@@ -58,8 +58,7 @@ Full flow in [docs/release-pipeline.md](docs/release-pipeline.md).
 
 umbra is the base of the umbra / ward stack, so it never reaches up into
 consumers. Downstream bumps are the consumers' job. The Go module path is
-`forgejo.coilysiren.me/coilyco-flight-deck/umbra`. Consumers set
-`GOPRIVATE=forgejo.coilysiren.me` and pin in `go.mod`.
+`github.com/coilyco/umbra`. Consumers pin a version in `go.mod`.
 
 ## Agent rules
 

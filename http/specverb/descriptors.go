@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/opcore"
 )
 
 // DescriptorConfig is what resolution needs and nothing more. It names no cli

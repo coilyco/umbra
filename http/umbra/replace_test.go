@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/umbra/codegen"
+	"github.com/coilyco/umbra/http/umbra/codegen"
 )
 
 func replacementMember(name string) member {

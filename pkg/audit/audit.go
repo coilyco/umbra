@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/exitcode"
+	"github.com/coilyco/umbra/pkg/exitcode"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 

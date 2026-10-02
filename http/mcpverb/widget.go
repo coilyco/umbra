@@ -6,9 +6,9 @@ import (
 	"sort"
 	"strings"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpapps"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/mcpclient"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/pkg/mcpapps"
+	"github.com/coilyco/umbra/pkg/mcpclient"
 )
 
 // WidgetGate is one granted tool's `widget` block resolved against the lock: the

@@ -12,10 +12,10 @@ import (
 	"strings"
 	"testing"
 
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/guardfile"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/http/opcore"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/policy"
-	"forgejo.coilysiren.me/coilyco-flight-deck/umbra/pkg/valuesource"
+	"github.com/coilyco/umbra/http/guardfile"
+	"github.com/coilyco/umbra/http/opcore"
+	"github.com/coilyco/umbra/pkg/policy"
+	"github.com/coilyco/umbra/pkg/valuesource"
 )
 
 // kindOf extracts the coded error's stable token, or "" for a nil/uncoded error.
@@ -753,10 +753,10 @@ func TestExecuteInlineFailWhenUsesRequestBodyVariables(t *testing.T) {
 
 func TestDefaultScheme(t *testing.T) {
 	cases := map[string]string{
-		"forgejo.coilysiren.me/api/v1":         "https://forgejo.coilysiren.me/api/v1",
-		"https://forgejo.coilysiren.me/api/v1": "https://forgejo.coilysiren.me/api/v1",
-		"http://127.0.0.1:8080":                "http://127.0.0.1:8080",
-		"":                                     "",
+		"forgejo.example/api/v1":         "https://forgejo.example/api/v1",
+		"https://forgejo.example/api/v1": "https://forgejo.example/api/v1",
+		"http://127.0.0.1:8080":          "http://127.0.0.1:8080",
+		"":                               "",
 	}
 	for in, want := range cases {
 		if got := opcore.DefaultScheme(in); got != want {
