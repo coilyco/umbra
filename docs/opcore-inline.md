@@ -22,6 +22,10 @@ wrap ward mcp forgejo {
 
 Unknown nodes, missing requirements, malformed predicates, and input collisions fail closed. An unrecognised verb is the one place the grammar infers rather than refuses, so it is reported.
 
+## Reserved names, and a consumer with no CLI
+
+**An input may not take a name the umbra CLI reserves** (`dry-run`, `query`, `output`, `body-file`), and `ParseInline` refuses one. A consumer that mounts no CLI flags states it with `ParseInlineWithOptions(src, InlineOptions{AllowReservedNames: true})`, which lifts only that check. mcp-beaver does, so an upstream's required `query` body field keeps its name. Two inputs with one name stay refused, and the aliasing and `map` forms are unchanged.
+
 ## Typed inputs
 
 `field` takes `string`, `boolean`, `integer`, `number`. `array` takes one via `items`. Bounds are inclusive `minimum`/`maximum` and `min-items`/`max-items`, the latter also usable on a body `array`. `mutually-exclusive` declares an at-most-one group over local names. Objects, duplicates, impossible bounds, and unresolved names fail closed. `Args.Query` stays strings. `Args.QueryValues` carries typed scalars and arrays, and one name through both fails closed. `query "search_query" upstream="query"` aliases a local whose upstream name would collide with `dry-run`, `query`, `output`, or `body-file`. Body projection and pinned values are [their own page](opcore-body.md); a body object whose keys are the caller's, or whose shape depends on a sibling field's value, is [`keyed` and `variant`](opcore-body-variants.md).

@@ -21,6 +21,18 @@ func ParseInline(src []byte) ([]Descriptor, RuntimeConfig, error) {
 // ParseInlineWithWarnings is [ParseInline] plus the non-fatal notes a caller
 // should surface, one per grant whose method was inferred rather than known.
 func ParseInlineWithWarnings(src []byte) ([]Descriptor, RuntimeConfig, []string, error) {
+	return ParseInlineWithOptions(src, InlineOptions{})
+}
+
+// InlineOptions are the consumer facts the inline grammar cannot read from the file.
+type InlineOptions struct {
+	// AllowReservedNames lets an input take a name the umbra CLI reserves for its flags.
+	// A consumer mounting no CLI sets it. Duplicate inputs stay refused.
+	AllowReservedNames bool
+}
+
+// ParseInlineWithOptions is [ParseInlineWithWarnings] for a consumer stating its options.
+func ParseInlineWithOptions(src []byte, opts InlineOptions) ([]Descriptor, RuntimeConfig, []string, error) {
 	// Accept the inline body grammar's boolean shorthand (`required=true`,
 	// `raw=true`) even though KDL itself spells booleans as `#true`.
 	doc, err := kdl.ParseString(normalizeInlineBooleans(string(src)))
@@ -31,7 +43,7 @@ func ParseInlineWithWarnings(src []byte) ([]Descriptor, RuntimeConfig, []string,
 	if wrap == nil {
 		return nil, RuntimeConfig{}, nil, fmt.Errorf("opcore: missing top-level `wrap` node")
 	}
-	p := &inlineParser{}
+	p := &inlineParser{opts: opts}
 	for _, a := range wrap.Arguments() {
 		p.group = append(p.group, a.String())
 	}
@@ -66,6 +78,7 @@ func normalizeInlineBooleans(src string) string {
 // inlineParser accumulates the wrap header, the RuntimeConfig, and the stated
 // descriptors as it walks the wrap body.
 type inlineParser struct {
+	opts     InlineOptions
 	group    []string
 	cfg      RuntimeConfig
 	descs    []Descriptor
@@ -238,7 +251,7 @@ func (p *inlineParser) parseGrant(n *kdl.Node) error {
 	if err := shapeGrant(&d, verb, resource); err != nil {
 		return err
 	}
-	if err := validateGrant(d, verb, resource); err != nil {
+	if err := validateGrant(d, verb, resource, p.opts); err != nil {
 		return err
 	}
 	if d.MethodInferred {
@@ -481,7 +494,7 @@ func applyInlineGrantControlChild(d *Descriptor, c *kdl.Node) error {
 }
 
 // validateGrant runs the cross-field checks a finished grant must pass.
-func validateGrant(d Descriptor, verb, resource string) error {
+func validateGrant(d Descriptor, verb, resource string, opts InlineOptions) error {
 	// A raw body is never decoded, so fail-when would have nothing to evaluate
 	// and would sit inert rather than guarding anything.
 	if d.RawResponse && d.FailWhen != "" {
@@ -502,6 +515,9 @@ func validateGrant(d Descriptor, verb, resource string) error {
 	}
 	if err := validateQueryExclusive(d); err != nil {
 		return err
+	}
+	if opts.AllowReservedNames {
+		return checkFlagCollisions(d, nil)
 	}
 	return CheckFlagCollisions(d)
 }

@@ -24,6 +24,12 @@ func descriptorBodyInputs(desc Descriptor) []Field {
 // CheckFlagCollisions rejects reserved or duplicate local inputs and duplicate
 // outgoing query names. Both descriptor sources share this fail-closed check.
 func CheckFlagCollisions(desc Descriptor) error {
+	return checkFlagCollisions(desc, ReservedFlagNames)
+}
+
+// checkFlagCollisions is [CheckFlagCollisions] against a given reserved set, which a
+// consumer with no CLI flags to protect leaves empty. Duplicates are refused either way.
+func checkFlagCollisions(desc Descriptor, reserved map[string]bool) error {
 	if err := validateBodyMappingMode(desc); err != nil {
 		return fmt.Errorf("opcore: %s: %w", desc.VerbName, err)
 	}
@@ -31,7 +37,7 @@ func CheckFlagCollisions(desc Descriptor) error {
 	bodyInputs := descriptorBodyInputs(desc)
 	all := append(append([]Field{}, desc.QueryFlags...), bodyInputs...)
 	for _, f := range append(all, desc.FormFlags...) {
-		if ReservedFlagNames[f.Name] {
+		if reserved[f.Name] {
 			return fmt.Errorf("opcore: %s: input %q collides with a reserved engine flag (fail-closed)", desc.VerbName, f.Name)
 		}
 		if seen[f.Name] {

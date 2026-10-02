@@ -1180,6 +1180,10 @@ func ParseInline(src []byte) ([]Descriptor, RuntimeConfig, error)
     the OpenAPI source feeds, plus the request RuntimeConfig. See
     docs/opcore-inline.md.
 
+func ParseInlineWithOptions(src []byte, opts InlineOptions) ([]Descriptor, RuntimeConfig, []string, error)
+    ParseInlineWithOptions is ParseInlineWithWarnings for a consumer stating its
+    options.
+
 func ParseInlineWithWarnings(src []byte) ([]Descriptor, RuntimeConfig, []string, error)
     ParseInlineWithWarnings is ParseInline plus the non-fatal notes a caller
     should surface, one per grant whose method was inferred rather than known.
@@ -1350,6 +1354,14 @@ type GraphQL struct {
 }
     GraphQL is one grant's operation: an authored document that never reaches
     the input schema, plus caller variables derived from its signature.
+
+type InlineOptions struct {
+	// AllowReservedNames lets an input take a name the umbra CLI reserves for its flags.
+	// A consumer mounting no CLI sets it. Duplicate inputs stay refused.
+	AllowReservedNames bool
+}
+    InlineOptions are the consumer facts the inline grammar cannot read from the
+    file.
 
 type MCPCall struct {
 	Tool string
