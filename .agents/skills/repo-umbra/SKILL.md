@@ -5,7 +5,7 @@ description: occlusion for agent CLIs and APIs. Declare what an agent may run, a
 
 # repo-umbra
 
-Repository `coilyco-flight-deck/umbra`. Checkout at `~/projects/coilyco-flight-deck/umbra/` when resident.
+Repository `coilyco/umbra`. Checkout at `~/projects/coilyco/umbra/` when resident.
 
 - [`README.md`](../../../README.md) - what it is, quickstart, layout.
 - [`AGENTS.md`](../../../AGENTS.md) - agent-facing context for the repo.

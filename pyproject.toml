@@ -1,5 +1,5 @@
 [tool.agentic-os.repo-pointer-skills]
-org = "coilyco-flight-deck"
+org = "coilyco"
 
 [tool.agentic-os.documentation-layout]
 # Declared rather than defaulted: an undeclared repo and a deliberately
