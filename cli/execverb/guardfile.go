@@ -252,7 +252,7 @@ func Parse(src []byte) (*Guardfile, error) {
 // applyDescription reads the optional top-level `description "..."` node (a
 // sibling of `wrap`), fail-closing on a bad shape or an empty string.
 func (gf *Guardfile) applyDescription(doc *kdl.Document) error {
-	n := doc.GetNode("description")
+	n := doc.GetNode(guardfile.DescriptionNode)
 	if n == nil {
 		return nil
 	}
