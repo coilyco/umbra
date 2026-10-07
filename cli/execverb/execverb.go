@@ -395,17 +395,16 @@ func checkFlagPolicy(args []string, g Grant) error {
 	for _, f := range g.AllowFlags {
 		allow[f] = true
 	}
-	deny := map[string]bool{}
-	for _, f := range g.DenyFlags {
-		deny[f] = true
-	}
 	for _, a := range args {
 		if !strings.HasPrefix(a, "-") {
 			continue
 		}
 		name, _, _ := strings.Cut(a, "=")
-		if deny[name] {
-			return fmt.Errorf("flag %q is denied for `%s`", name, strings.Join(g.Subcommand, " "))
+		if d, ok := deniedBy(name, g.DenyFlags); ok {
+			if d == name {
+				return fmt.Errorf("flag %q is denied for `%s`", name, strings.Join(g.Subcommand, " "))
+			}
+			return fmt.Errorf("flag %q is denied for `%s`: it stands for %q", name, strings.Join(g.Subcommand, " "), d)
 		}
 		if len(allow) > 0 && !allow[name] {
 			return fmt.Errorf("flag %q is not in the allowlist for `%s`", name, strings.Join(g.Subcommand, " "))

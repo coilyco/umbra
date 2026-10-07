@@ -40,7 +40,7 @@ corpus ask-tier {
     call "git status --porcelain=v2" class=near-miss expect=accept rule="can run status"
     call "git commit --no-verify -m wip" class=near-miss expect=reject rule="deny-flag --no-verify"
     call "git commit --amend -m wip" class=near-miss expect=reject rule="deny-flag --amend"
-    call "git commit -n -m wip" class=near-miss expect=accept rule="can run commit"
+    call "git commit -n -m wip" class=near-miss expect=reject rule="deny-flag -n" note="COI-1899: git's short alias for --no-verify, listed as an alias"
     call "git log -- secret.txt" class=near-miss expect=reject rule="deny-when *secret*"
     call "git log secret-branch" class=near-miss expect=reject rule="deny-when *secret*"
     call "git log --all" class=near-miss expect=accept rule="can run log"

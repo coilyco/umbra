@@ -14,7 +14,7 @@ import (
 const replaceGuardfile = `wrap aosguard git {
     exec git
     replace
-    can run commit { deny-flag "--no-verify" }
+    can run commit { deny-flag "--no-verify" aliases="-n" }
     can run status
 }`
 

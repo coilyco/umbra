@@ -26,4 +26,4 @@ resource = "diff"
 [[wrap.can]]
 verb = "run"
 resource = "commit"
-kdl = 'deny-flag "--no-verify"'
+kdl = 'deny-flag "--no-verify" aliases="-n"'

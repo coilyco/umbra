@@ -905,7 +905,11 @@ func (g *Grant) applyPolicyNode(c *kdl.Node) error {
 	v := args[0].String()
 	switch c.Name() {
 	case "deny-flag":
-		g.DenyFlags = append(g.DenyFlags, v)
+		spellings, err := parseDenyFlag(c, strings.Join(g.Subcommand, " "))
+		if err != nil {
+			return err
+		}
+		g.DenyFlags = append(g.DenyFlags, spellings...)
 	case "allow-flag":
 		g.AllowFlags = append(g.AllowFlags, v)
 	case "value-flag":

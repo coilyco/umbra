@@ -10,8 +10,8 @@ wrap corpus git {
         deny-when any-arg matches "*secret*"
     }
     can run commit {
-        deny-flag "--no-verify"
-        deny-flag "--amend"
+        deny-flag "--no-verify" aliases="-n"
+        deny-flag "--amend" aliases="none"
     }
     can run reflog
     can run "stash list"

@@ -38,7 +38,7 @@ Eighteen lines, and every refusal you met comes from one of them.
     can run log
     can run diff
     can run commit {
-        deny-flag "--no-verify"
+        deny-flag "--no-verify" aliases="-n"
     }
 
     withhold push {
@@ -50,7 +50,9 @@ Eighteen lines, and every refusal you met comes from one of them.
 * **`can run`** grants a verb. Four here, out of git's hundred and forty.
 * **`deny-flag`** grants the verb and refuses one way of calling it. `commit`
   works and `commit --no-verify` does not, because the point of that flag is to
-  skip the checks the grant exists to preserve.
+  skip the checks the grant exists to preserve. `aliases="-n"` lists git's short
+  spelling of it: umbra cannot read git's alias table, so a `deny-flag` that does
+  not list its aliases, or say `aliases="none"`, fails to parse.
 * **`withhold`** names a verb in order to refuse it out loud. The `reason` and
   the `alternative` are what a caller sees, which is why `git push` tells you to
   use `status` and `git rebase` tells you nothing.

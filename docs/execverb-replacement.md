@@ -11,7 +11,7 @@ wrap aosguard git {
     exec git
     replace
     can run status
-    can run commit { deny-flag "--no-verify" }
+    can run commit { deny-flag "--no-verify" aliases="-n" }
     withhold rebase {
         reason "A rewritten history cannot be reconstructed from this audit log."
         alternative "commit"

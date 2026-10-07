@@ -17,4 +17,4 @@ wrap:
       resource: diff
     - verb: run
       resource: commit
-      kdl: 'deny-flag "--no-verify"'
+      kdl: 'deny-flag "--no-verify" aliases="-n"'

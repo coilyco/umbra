@@ -21,7 +21,7 @@ const gitGuardfile = `wrap ward git {
 	can run status
 	can run log
 	can run commit {
-		deny-flag "--no-verify"
+		deny-flag "--no-verify" aliases="-n"
 		describe "record staged changes"
 	}
 	can run push {
@@ -109,6 +109,69 @@ func TestDenyFlagRefused(t *testing.T) {
 	}
 	if cp.bin != "" {
 		t.Errorf("denied invocation still executed: %s %v", cp.bin, cp.argv)
+	}
+}
+
+// COI-1899: git takes -n for --no-verify, a bundle like -an, and --no-verif.
+func TestDenyFlagRefusesEverySpelling(t *testing.T) {
+	for _, flag := range []string{"--no-verify", "-n", "-an", "-nm", "--no-verif", "--no-v", "--no-verify=1"} {
+		t.Run(flag, func(t *testing.T) {
+			var cp capture
+			err := runArgv(t, gitGuardfile, &cp, "git", "commit", flag, "x")
+			if err == nil {
+				t.Fatalf("git commit %s was forwarded, want a deny-flag refusal", flag)
+			}
+			if !strings.Contains(err.Error(), "is denied for `commit`") {
+				t.Errorf("refusal = %q, want the deny-flag text", err)
+			}
+			if cp.bin != "" {
+				t.Errorf("denied invocation still executed: %s %v", cp.bin, cp.argv)
+			}
+		})
+	}
+}
+
+func TestDenyFlagLeavesUnrelatedFlagsAlone(t *testing.T) {
+	for _, flag := range []string{"-m", "-a", "--amend", "--no-edit", "--message=verify", "-s"} {
+		t.Run(flag, func(t *testing.T) {
+			var cp capture
+			if err := runArgv(t, gitGuardfile, &cp, "git", "commit", flag, "x"); err != nil {
+				t.Fatalf("git commit %s refused: %v", flag, err)
+			}
+		})
+	}
+}
+
+// No alias table is readable, so an unaccounted-for deny-flag fails to parse.
+func TestDenyFlagWithoutAliasesFailsToParse(t *testing.T) {
+	cases := map[string]struct{ node, want string }{
+		"no aliases declared": {`deny-flag "--no-verify"`, "alias"},
+		"unknown property":    {`deny-flag "--no-verify" alias="-n"`, "unknown property"},
+		"not a flag":          {`deny-flag "no-verify" aliases="none"`, "flag spelling"},
+		"alias not a flag":    {`deny-flag "--no-verify" aliases="n"`, "flag spelling"},
+		"empty alias":         {`deny-flag "--no-verify" aliases="-n,"`, "flag spelling"},
+	}
+	for name, tc := range cases {
+		t.Run(name, func(t *testing.T) {
+			_, err := Parse([]byte("wrap ward git {\n exec git\n can run commit { " + tc.node + " }\n}"))
+			if err == nil {
+				t.Fatal("Parse accepted a deny-flag that does not account for its aliases")
+			}
+			if !strings.Contains(err.Error(), tc.want) {
+				t.Errorf("Parse error = %q, want it to mention %q", err, tc.want)
+			}
+		})
+	}
+}
+
+func TestDenyFlagNoneDeniesOnlyTheNamedSpelling(t *testing.T) {
+	src := "wrap ward git {\n exec git\n can run commit { deny-flag \"--amend\" aliases=\"none\" }\n}"
+	var cp capture
+	if err := runArgv(t, src, &cp, "git", "commit", "--amend"); err == nil {
+		t.Fatal("--amend was forwarded")
+	}
+	if err := runArgv(t, src, &cp, "git", "commit", "-n"); err != nil {
+		t.Fatalf("-n refused under a deny-flag that named only --amend: %v", err)
 	}
 }
 

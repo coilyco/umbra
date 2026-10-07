@@ -59,7 +59,7 @@ wrap example git {
     can run log
     can run diff
     can run commit {
-        deny-flag "--no-verify"
+        deny-flag "--no-verify" aliases="-n"
     }
 
     withhold push {
