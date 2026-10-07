@@ -2330,6 +2330,10 @@ const SessionIDEnv = "CLAUDE_SESSION_ID"
     SessionIDEnv is the environment variable consulted as the fallback source
     for Record.SessionID when no context value is present. Parent processes
 
+const UnknownVersion = "(devel)"
+    UnknownVersion is the Record.Version of a row written by a binary that
+    carries no module version, such as one built from a checkout.
+
 
 VARIABLES
 
@@ -2338,6 +2342,18 @@ var ErrPathUnset = errors.New("audit: log path not configured")
 
 
 FUNCTIONS
+
+func AtOrAfter(release string) func(Record) bool
+    AtOrAfter selects rows from a build at or after release, a tag like
+    "v0.30.0". A non-semver Version ("dev", "(devel)", empty) cannot be placed,
+    so never matches.
+
+func BuildVersion() string
+    BuildVersion reports the module version linked into this binary,
+    or UnknownVersion when the toolchain recorded none.
+
+func ByVersion(version string) func(Record) bool
+    ByVersion selects the rows stamped with exactly version.
 
 func OutcomeFor(code int) string
     OutcomeFor classifies an exit code into the four span outcomes. This is the
@@ -2467,6 +2483,10 @@ type Record struct {
     Record is one line in the audit log. Timestamp is unix seconds (int64),
     JSON-encoded as a number. Easier to sort and diff than RFC3339 strings.
 
+func Filter(records []Record, keep func(Record) bool) []Record
+    Filter returns the records keep accepts, in order. Rows from before
+    Record.Version existed have an empty Version and match no version selector.
+
 func ReadAll(r io.Reader) ([]Record, error)
     ReadAll decodes every record from r. Useful for tests and for `audit
     tail`-style verbs.
@@ -2522,6 +2542,10 @@ type Writer struct {
 	MaxAgeDays int
 	// Compress gzips rotated files.
 	Compress bool
+
+	// Version stamps rows whose Record.Version is unset, else BuildVersion.
+	// Generated binaries set it to their -ldflags version.
+	Version string
 
 	// Sinks receive each appended record as a Span, after the JSONL write.
 	// A panicking or slow sink is the consumer's problem, never the log's.

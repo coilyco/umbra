@@ -126,6 +126,9 @@ func TestWrap_WritesAuditRecord(t *testing.T) {
 	if records[0].Decision != audit.DecisionAccept {
 		t.Errorf("decision = %q, want %q", records[0].Decision, audit.DecisionAccept)
 	}
+	if records[0].Version != audit.BuildVersion() {
+		t.Errorf("version = %q, want the linked build version %q", records[0].Version, audit.BuildVersion())
+	}
 }
 
 // TestWrap_RecordsCWDFields pins the audit CWD field: every audit

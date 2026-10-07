@@ -575,6 +575,7 @@ func auditWriter() *audit.Writer {
 		os.Exit(2)
 	}
 	w := audit.NewWriter(path)
+	w.Version = Version
 	if err := w.Preflight(); err != nil {
 		fmt.Fprintf(os.Stderr, "{{.Binary}}: fatal: %v\n", err)
 		os.Exit(2)
