@@ -30,6 +30,7 @@ run 5 >/dev/null || fail "an asset that answers should pass"
 printf 'url "%s/umbra-linux-amd64"\nurl "%s/umbra-darwin-arm64"\n' "$base" "$base" > "$work/dist/umbra.rb"
 if run 3 >/dev/null 2>"$work/err"; then fail "a missing asset must fail once the wait is up"; fi
 grep -q "umbra-darwin-arm64" "$work/err" || fail "the failure should name the missing asset"
+grep -q "http=404" "$work/err" || fail "the failure should carry the HTTP status the probe saw"
 
 ( sleep 2; printf x > "$work/site/releases/download/v1/umbra-darwin-arm64" ) &
 run 10 >/dev/null || fail "an asset that appears during the wait should pass"
