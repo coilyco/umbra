@@ -154,7 +154,7 @@ func upstreamHeader(n *kdl.Node, up *Upstream) error {
 
 // upstreamDescription reads the optional sibling `description "..."`.
 func upstreamDescription(doc *kdl.Document, up *Upstream) error {
-	d := doc.GetNode("description")
+	d := doc.GetNode(guardfile.DescriptionNode)
 	if d == nil {
 		return nil
 	}

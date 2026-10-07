@@ -445,6 +445,10 @@ const AuthSchemeNone = "none"
     AuthSchemeNone marks a deliberately credential-free upstream. Distinct from
     an unset scheme, which is a spec that forgot. See docs/specverb-policy.md.
 
+const DescriptionNode = "description"
+    DescriptionNode is the top-level `description "..."` node every dialect
+    parser reads beside `wrap`. Parse sites name it through this constant.
+
 
 VARIABLES
 
@@ -476,6 +480,10 @@ func LowerForDiscovery(path string, src []byte) ([]byte, error)
 func ParseAllowMetaNode(n *kdl.Node) ([]string, error)
     ParseAllowMetaNode parses one `allow-metacharacters` KDL node into its param
     names, the entry the inline dialect shares with the guardfile dialect.
+
+func SiblingNodes() []string
+    SiblingNodes returns, sorted, the top-level names umbra reads beside `wrap`
+    or `mcp-upstream`, so a consumer tells an umbra node from an unread one.
 
 
 TYPES

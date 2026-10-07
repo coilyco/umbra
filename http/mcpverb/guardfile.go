@@ -170,7 +170,7 @@ func Parse(src []byte) (*Guardfile, error) {
 		return nil, fmt.Errorf("mcpverb: %d top-level `wrap` nodes; a guardfile holds one, so split the rest into their own files (fail-closed)", n)
 	}
 	gf := &Guardfile{}
-	if d := doc.GetNode("description"); d != nil {
+	if d := doc.GetNode(guardfile.DescriptionNode); d != nil {
 		v, derr := singleArg(d, "description")
 		if derr != nil {
 			return nil, fmt.Errorf("mcpverb: %w", derr)
