@@ -28,6 +28,7 @@ Both wrote a row. The granted one:
 {
     "id": "01a08aac-c534-720f-8072-0b1d4566676a",
     "ts": 1789032973,
+    "version": "v0.31.0",
     "decision": "accept",
     "verb": "example.git.status",
     "argv": ["git", "status", "--short"],
@@ -44,6 +45,7 @@ And the refused one:
 {
     "id": "01a08aad-6350-7851-9fb0-1da6b7802d3d",
     "ts": 1789033014,
+    "version": "v0.31.0",
     "decision": "reject",
     "verb": "example.git.commit",
     "argv": ["git", "commit", "--no-verify", "-m", "x"],
@@ -62,6 +64,14 @@ is the more interesting half when the caller is an agent.
 `verb` is the guardfile's name for the call rather than the binary's, so
 `example git` plus `commit` becomes `example.git.commit`. That is what makes
 rows from different binaries comparable.
+
+`version` is the build that wrote the row: the `-ldflags` version of a generated
+binary (`dev` when unstamped), else the module version Go linked in, else
+`(devel)`. Rows from before the field existed have none. Select by build with
+`audit.ByVersion`, or with `audit.AtOrAfter("v0.31.0")` for every row from that
+release on, applied through `audit.Filter` to what `audit.ReadAll` returns. A row
+whose version is not a semver tag, `dev` and `(devel)` included, is never
+selected by `AtOrAfter`.
 
 The refused row differs from the granted one in three fields: `decision` is
 `reject`, `exit_code` is 2, and `error` says why. Nothing else changes shape, so

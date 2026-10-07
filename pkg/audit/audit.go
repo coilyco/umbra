@@ -12,6 +12,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -150,6 +151,19 @@ func newUUIDv7(now time.Time) (string, error) {
 		b[0:4], b[4:6], b[6:8], b[8:10], b[10:16]), nil
 }
 
+// UnknownVersion is the Record.Version of a row written by a binary that
+// carries no module version, such as one built from a checkout.
+const UnknownVersion = "(devel)"
+
+// BuildVersion reports the module version linked into this binary, or
+// UnknownVersion when the toolchain recorded none.
+func BuildVersion() string {
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" {
+		return info.Main.Version
+	}
+	return UnknownVersion
+}
+
 // Decision values for Record.Decision.
 const (
 	DecisionAccept = "accept"
@@ -171,6 +185,10 @@ type Writer struct {
 	MaxAgeDays int
 	// Compress gzips rotated files.
 	Compress bool
+
+	// Version stamps rows whose Record.Version is unset, else BuildVersion.
+	// Generated binaries set it to their -ldflags version.
+	Version string
 
 	// Sinks receive each appended record as a Span, after the JSONL write.
 	// A panicking or slow sink is the consumer's problem, never the log's.
@@ -209,6 +227,13 @@ func (w *Writer) Append(r Record) error {
 			return err
 		}
 		r.ID = id
+	}
+
+	if r.Version == "" {
+		r.Version = w.Version
+	}
+	if r.Version == "" {
+		r.Version = BuildVersion()
 	}
 
 	w.applyRedaction(&r)

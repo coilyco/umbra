@@ -503,3 +503,85 @@ func read(t *testing.T, path string) []audit.Record {
 	}
 	return records
 }
+
+func TestAppend_StampsVersion(t *testing.T) {
+	cases := []struct {
+		name      string
+		writerVer string
+		recordVer string
+		want      string
+		wantBuild bool
+	}{
+		{name: "writer version", writerVer: "v1.2.3", want: "v1.2.3"},
+		{name: "record wins over writer", writerVer: "v1.2.3", recordVer: "v9.9.9", want: "v9.9.9"},
+		{name: "falls back to build info", wantBuild: true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			w := tempWriter(t)
+			w.Version = tc.writerVer
+			if err := w.Append(audit.Record{Verb: "v", Version: tc.recordVer}); err != nil {
+				t.Fatalf("Append: %v", err)
+			}
+			got := read(t, w.Path)[0].Version
+			want := tc.want
+			if tc.wantBuild {
+				want = audit.BuildVersion()
+			}
+			if got == "" || got != want {
+				t.Errorf("version = %q, want %q", got, want)
+			}
+		})
+	}
+}
+
+func TestAppend_VersionOnRejectAndWrapRows(t *testing.T) {
+	w := tempWriter(t)
+	w.Version = "v0.5.0"
+	_ = w.Wrap(context.Background(), audit.Record{Verb: "ok"}, func() error { return nil })
+	_ = w.Wrap(context.Background(), audit.Record{Verb: "bad"}, func() error { return errors.New("boom") })
+	for _, r := range read(t, w.Path) {
+		if r.Version != "v0.5.0" {
+			t.Errorf("%s row version = %q, want v0.5.0", r.Verb, r.Version)
+		}
+	}
+}
+
+func TestSelectByVersion_KeepsOldRowsReadable(t *testing.T) {
+	log := strings.Join([]string{
+		`{"ts":1,"decision":"accept","verb":"old","argv":[],"exit_code":0}`,
+		`{"ts":2,"version":"v0.9.0","decision":"accept","verb":"a","argv":[],"exit_code":0}`,
+		`{"ts":3,"version":"v0.10.0","decision":"accept","verb":"b","argv":[],"exit_code":0}`,
+		`{"ts":4,"version":"v0.10.0-rc.1","decision":"accept","verb":"rc","argv":[],"exit_code":0}`,
+		`{"ts":5,"version":"(devel)","decision":"accept","verb":"dev","argv":[],"exit_code":0}`,
+		`{"ts":6,"version":"v1.0.0+meta","decision":"accept","verb":"c","argv":[],"exit_code":0}`,
+	}, "\n") + "\n"
+	records, err := audit.ReadAll(strings.NewReader(log))
+	if err != nil {
+		t.Fatalf("ReadAll: %v", err)
+	}
+	if len(records) != 6 || records[0].Version != "" {
+		t.Fatalf("old row not readable as-is: %+v", records)
+	}
+	verbs := func(rs []audit.Record) string {
+		var out []string
+		for _, r := range rs {
+			out = append(out, r.Verb)
+		}
+		return strings.Join(out, ",")
+	}
+	if got := verbs(audit.Filter(records, audit.ByVersion("v0.10.0"))); got != "b" {
+		t.Errorf("ByVersion = %q, want b", got)
+	}
+	// v0.10.0 sorts above v0.9.0 numerically, a pre-release below its release,
+	// and neither the unversioned nor the "(devel)" row is placeable.
+	if got := verbs(audit.Filter(records, audit.AtOrAfter("v0.10.0"))); got != "b,c" {
+		t.Errorf("AtOrAfter(v0.10.0) = %q, want b,c", got)
+	}
+	if got := verbs(audit.Filter(records, audit.AtOrAfter("v0.9.0"))); got != "a,b,rc,c" {
+		t.Errorf("AtOrAfter(v0.9.0) = %q, want a,b,rc,c", got)
+	}
+	if got := audit.Filter(records, audit.AtOrAfter("not-a-version")); len(got) != 0 {
+		t.Errorf("AtOrAfter(garbage) selected %d rows, want 0", len(got))
+	}
+}
