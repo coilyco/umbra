@@ -35,6 +35,10 @@ grep -q "http=404" "$work/err" || fail "the failure should carry the HTTP status
 ( sleep 2; printf x > "$work/site/releases/download/v1/umbra-darwin-arm64" ) &
 run 10 >/dev/null || fail "an asset that appears during the wait should pass"
 
+printf 'url "%s/umbra-linux-amd64"\nurl "%s/umbra-windows-amd64.exe"\n' "$base" "$base" > "$work/dist/umbra.rb"
+( sleep 2; printf x > "$work/site/releases/download/v1/umbra-windows-amd64.exe"; rm "$work/site/releases/download/v1/umbra-linux-amd64" ) &
+run 10 >/dev/null 2>&1 || fail "an asset that answered once must stay counted when a later pass cannot reach it"
+
 : > "$work/dist/umbra.rb"; : > "$work/dist/umbra.json"
 if run 3 >/dev/null 2>&1; then fail "no URLs at all must fail, not pass"; fi
 echo ok
