@@ -67,7 +67,10 @@ discriminator constraint plus that branch's own `properties`/`required`.
 At request time, a keyed object validates every key's value against `entry`;
 a `variant` value reads the discriminator, fails closed on a missing,
 non-string, or unrecognized value, then validates the rest against the
-matching case's fields.
+matching case's fields. A value of the wrong JSON type also fails closed: a
+string, array, or JSON-encoded string where a keyed map, variant entry, or
+array is declared is refused before the call, never forwarded for the upstream
+to 422. A `raw=true` field is exempt.
 
 ## Array bounds, extended to the body grammar
 

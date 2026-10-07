@@ -760,19 +760,52 @@ func validateObjectBodyValue(v any, f Field, path string) error {
 	if f.Keyed {
 		return validateKeyedObjectBodyValue(v, f, path)
 	}
-	child, ok := v.(map[string]any)
-	if !ok || len(f.Fields) == 0 {
+	if len(f.Fields) == 0 {
 		return nil
 	}
+	child, ok := v.(map[string]any)
+	if !ok {
+		return wrongShape(path, "an object", v)
+	}
 	return validateBodyFields(child, f.Fields, path)
+}
+
+// wrongShape refuses a value whose JSON type contradicts the field's
+// declaration. Skipping it let a string stand in for a keyed map, COI-2083.
+func wrongShape(path, want string, v any) error {
+	return exitcode.New(exitcode.UserError, "user_error",
+		fmt.Errorf("%s must be %s, got %s", path, want, jsonKind(v)),
+		"send "+want+" here, not a string holding JSON and not another JSON type")
+}
+
+// jsonKind names the JSON type of a decoded value for a refusal message.
+func jsonKind(v any) string {
+	switch v.(type) {
+	case nil:
+		return "null"
+	case string:
+		return "a string"
+	case bool:
+		return "a boolean"
+	case float64, int, int64:
+		return "a number"
+	case []any, []string:
+		return "an array"
+	case map[string]any:
+		return "an object"
+	}
+	return fmt.Sprintf("%T", v)
 }
 
 // validateKeyedObjectBodyValue validates every caller-chosen key's value
 // against the field's shared EntrySchema.
 func validateKeyedObjectBodyValue(v any, f Field, path string) error {
-	obj, ok := v.(map[string]any)
-	if !ok || f.EntrySchema == nil {
+	if f.EntrySchema == nil {
 		return nil
+	}
+	obj, ok := v.(map[string]any)
+	if !ok {
+		return wrongShape(path, "an object keyed by name", v)
 	}
 	for key, val := range obj {
 		if err := validateFieldValue(val, *f.EntrySchema, fmt.Sprintf("%s.%s", path, key)); err != nil {
@@ -787,7 +820,7 @@ func validateKeyedObjectBodyValue(v any, f Field, path string) error {
 func validateVariantBodyValue(v any, variant Variant, path string) error {
 	obj, ok := v.(map[string]any)
 	if !ok {
-		return nil
+		return wrongShape(path, "an object with a "+strconv.Quote(variant.On)+" field", v)
 	}
 	discRaw, present := obj[variant.On]
 	if !present {
@@ -810,12 +843,36 @@ func validateVariantBodyValue(v any, variant Variant, path string) error {
 	return validateBodyFields(obj, fields, path)
 }
 
+// arrayItems views a decoded array, including the []string a Go caller builds.
+func arrayItems(v any) ([]any, bool) {
+	if items, ok := v.([]any); ok {
+		return items, true
+	}
+	strs, ok := v.([]string)
+	if !ok {
+		return nil, false
+	}
+	items := make([]any, len(strs))
+	for i, s := range strs {
+		items[i] = s
+	}
+	return items, true
+}
+
+// declaresArrayShape reports whether the field says anything a non-array breaks.
+func declaresArrayShape(f Field) bool {
+	return f.Item != nil || f.MinItems != nil || f.MaxItems != nil || f.Items != ""
+}
+
 // validateArrayBodyValue walks an array of object items when the field declares
 // an item schema.
 func validateArrayBodyValue(v any, f Field, path string) error {
-	items, ok := v.([]any)
+	items, ok := arrayItems(v)
 	if !ok {
-		return nil
+		if !declaresArrayShape(f) {
+			return nil
+		}
+		return wrongShape(path, "an array", v)
 	}
 	if f.MinItems != nil && len(items) < *f.MinItems {
 		return exitcode.New(exitcode.UserError, "user_error",
@@ -833,7 +890,7 @@ func validateArrayBodyValue(v any, f Field, path string) error {
 	for i, item := range items {
 		child, ok := item.(map[string]any)
 		if !ok {
-			continue
+			return wrongShape(fmt.Sprintf("%s[%d]", path, i), "an object", item)
 		}
 		if err := validateBodyFields(child, f.Item.Fields, fmt.Sprintf("%s[%d]", path, i)); err != nil {
 			return err
