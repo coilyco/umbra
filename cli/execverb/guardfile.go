@@ -211,6 +211,9 @@ type GateSpec struct {
 	Name     string   // registry key; consumers register their own gates
 	Patterns []string // gate-specific deny globs; empty = gate defaults
 	Allow    []string // explicit allow globs
+	// Options holds every other `<key> "<value>"` child. The gate's builder
+	// rejects a key it does not know, so an unknown node still fails closed.
+	Options map[string][]string
 }
 
 // Parse turns exec-dialect Guardfile source into a Guardfile. It fails closed:
@@ -890,7 +893,10 @@ func parseGate(c *kdl.Node) (GateSpec, error) {
 		case "allow":
 			gs.Allow = append(gs.Allow, v)
 		default:
-			return GateSpec{}, fmt.Errorf("execverb: gate %s: unknown node %q (fail-closed)", gs.Name, n.Name())
+			if gs.Options == nil {
+				gs.Options = map[string][]string{}
+			}
+			gs.Options[n.Name()] = append(gs.Options[n.Name()], v)
 		}
 	}
 	return gs, nil
