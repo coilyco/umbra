@@ -292,7 +292,7 @@ type gateFunc func(argv []string) error
 
 // gateRegistry maps Guardfile gate names onto builders. Unknown names fail
 // closed at build time, so a typo can never become a silently absent gate.
-var gateRegistry = map[string]func(GateSpec) gateFunc{}
+var gateRegistry = map[string]func(GateSpec) (gateFunc, error){}
 
 // buildGates resolves a grant's gate specs against the registry, fail-closed.
 func buildGates(g Grant) ([]gateFunc, error) {
@@ -302,7 +302,11 @@ func buildGates(g Grant) ([]gateFunc, error) {
 		if !ok {
 			return nil, fmt.Errorf("execverb: grant %q: unknown gate %q (fail-closed)", g.subcommandLabel(), gs.Name)
 		}
-		gates = append(gates, build(gs))
+		gate, err := build(gs)
+		if err != nil {
+			return nil, fmt.Errorf("execverb: grant %q: gate %q: %w (fail-closed)", g.subcommandLabel(), gs.Name, err)
+		}
+		gates = append(gates, gate)
 	}
 	return gates, nil
 }

@@ -156,6 +156,9 @@ type GateSpec struct {
 	Name     string   // registry key; consumers register their own gates
 	Patterns []string // gate-specific deny globs; empty = gate defaults
 	Allow    []string // explicit allow globs
+	// Options holds every other `<key> "<value>"` child. The gate's builder
+	// rejects a key it does not know, so an unknown node still fails closed.
+	Options map[string][]string
 }
     GateSpec names a registered preflight gate plus its declarative config.
 

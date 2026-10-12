@@ -17,7 +17,7 @@ wrap ward git {
 - **`argv <tokens...>`** - fixed fragments replacing the subcommand. **`embed`** compiles a file in and inserts its runtime path. **`sealed`** forbids trailing caller args. **`bin`** overrides the wrap binary for one leaf and does **not** inherit `argv-prefix`.
 - **Flag policy** - `deny-flag` (default-allow minus denials, see [deny-flag spellings](#deny-flag-spellings)) or `allow-flag` (strict allowlist).
 - **`when` / `deny-when <sel> matches <glob...>`** - argv guards. The selector is a flag name (`secret-id` reads `--secret-id`), `any-arg`, or `argN`.
-- **`gate <name>`** - a registered preflight gate. The registry ships empty, so every name fails closed until a consumer registers one.
+- **`gate <name>`** - a registered preflight gate. Unknown names fail closed. umbra ships one, [`paths-within`](execverb-paths-within.md), for a path that must stay inside directories known only at run time. The registry is otherwise empty until a consumer registers more.
 
 Unknown nodes fail closed. `execverb.Mount` mirrors `specverb.Mount`: one leaf per grant under `verb.Wrap`, `SkipFlagParsing` so caller args pass through after the check. The invocation is `bin + argv-prefix + (subcommand or argv) + caller args`.
 

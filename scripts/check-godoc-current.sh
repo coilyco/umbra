@@ -27,10 +27,7 @@ case "${1:-}" in
     echo "godoc-current.txt updated"
     ;;
   *)
-    expected_file=$(mktemp)
-    trap 'rm -f "$expected_file"' EXIT
-    gen > "$expected_file"
-    if ! diff -u godoc-current.txt "$expected_file"; then
+    if ! gen | diff -u godoc-current.txt -; then
       echo
       echo "godoc-current.txt is out of date." >&2
       echo "Regenerate with: ./scripts/check-godoc-current.sh --update" >&2

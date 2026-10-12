@@ -43,8 +43,8 @@ func runAudited(t *testing.T, src string, argv ...string) ([]audit.Record, *capt
 }
 
 func TestEveryGuardfileRefusalIsPolicyDeniedAndAuditsAsReject(t *testing.T) {
-	gateRegistry["test-refuse"] = func(GateSpec) gateFunc {
-		return func([]string) error { return errors.New("gate refuses every call") }
+	gateRegistry["test-refuse"] = func(GateSpec) (gateFunc, error) {
+		return func([]string) error { return errors.New("gate refuses every call") }, nil
 	}
 	t.Cleanup(func() { delete(gateRegistry, "test-refuse") })
 
@@ -130,8 +130,8 @@ func TestStatedRefusalsWriteARejectRow(t *testing.T) {
 // The `action run` primitive checks each step against the same policy in its
 // own copy of the sequence, so it is covered separately from the leaf path.
 func TestActionStepRefusalsArePolicyDenied(t *testing.T) {
-	gateRegistry["test-refuse"] = func(GateSpec) gateFunc {
-		return func([]string) error { return errors.New("gate refuses every step") }
+	gateRegistry["test-refuse"] = func(GateSpec) (gateFunc, error) {
+		return func([]string) error { return errors.New("gate refuses every step") }, nil
 	}
 	t.Cleanup(func() { delete(gateRegistry, "test-refuse") })
 
