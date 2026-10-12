@@ -23,6 +23,10 @@ type Surface struct {
 	// DefaultAllow is the `default-allow` reason, empty when the wrap is closed.
 	// Without it a reader reads the grants as the whole surface.
 	DefaultAllow string `json:"default_allow,omitempty"`
+
+	// AllowMetacharacters is the `allow-metacharacters` reason, empty when the
+	// shell-metacharacter gate still binds every leaf.
+	AllowMetacharacters string `json:"allow_metacharacters,omitempty"`
 }
 
 // GrantInfo is one mounted grant: its CLI placement, the real invocation it
@@ -52,6 +56,7 @@ func Describe(gf *Guardfile) *Surface {
 	}
 	s := &Surface{Group: gf.Group, Description: gf.Description, Bin: gf.Bin, ArgvPrefix: gf.ArgvPrefix}
 	s.DefaultAllow = gf.DefaultAllow.Reason
+	s.AllowMetacharacters = gf.AllowMeta.Reason
 	for _, e := range gf.Env {
 		s.Env = append(s.Env, e.Name+" = "+strings.TrimSpace(e.Provider+" "+e.Address))
 	}

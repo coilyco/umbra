@@ -52,6 +52,10 @@ type Guardfile struct {
 	// wrapped binary rather than refused. See docs/execverb-default-allow.md.
 	DefaultAllow DefaultAllow
 
+	// AllowMeta lifts the shell-metacharacter gate from every granted leaf, for a
+	// binary that receives argv through execve. See docs/execverb-allow-metacharacters.md.
+	AllowMeta AllowMeta
+
 	// Actions are declared ordered call sequences over granted exec leaves. See
 	// docs/execverb.md.
 	Actions []guardfile.Action
@@ -364,6 +368,13 @@ func (gf *Guardfile) applyTailNode(n *kdl.Node) error {
 			return err
 		}
 		gf.DefaultAllow = da
+		return nil
+	case "allow-metacharacters":
+		am, err := parseAllowMeta(n)
+		if err != nil {
+			return err
+		}
+		gf.AllowMeta = am
 		return nil
 	case "action":
 		return gf.appendAction(n)

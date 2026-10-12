@@ -72,6 +72,13 @@ func RootFlagFallback(ctx context.Context, gf *Guardfile, fb *Fallback, err erro
 
 TYPES
 
+type AllowMeta struct {
+	Declared bool
+	Reason   string
+}
+    AllowMeta is the parsed `allow-metacharacters` declaration. Reason is
+    required.
+
 type CaptureRunner func(ctx context.Context, bin string, argv, env []string) (stdout, stderr []byte, exitCode int, err error)
     CaptureRunner fires a step command and captures its output (unlike Runner,
     which streams). err is a spawn failure; a non-zero exit returns exitCode.
@@ -261,6 +268,10 @@ type Guardfile struct {
 	// wrapped binary rather than refused. See docs/execverb-default-allow.md.
 	DefaultAllow DefaultAllow
 
+	// AllowMeta lifts the shell-metacharacter gate from every granted leaf, for a
+	// binary that receives argv through execve. See docs/execverb-allow-metacharacters.md.
+	AllowMeta AllowMeta
+
 	// Actions are declared ordered call sequences over granted exec leaves. See
 	// docs/execverb.md.
 	Actions []guardfile.Action
@@ -320,6 +331,10 @@ type Surface struct {
 	// DefaultAllow is the `default-allow` reason, empty when the wrap is closed.
 	// Without it a reader reads the grants as the whole surface.
 	DefaultAllow string `json:"default_allow,omitempty"`
+
+	// AllowMetacharacters is the `allow-metacharacters` reason, empty when the
+	// shell-metacharacter gate still binds every leaf.
+	AllowMetacharacters string `json:"allow_metacharacters,omitempty"`
 }
     Surface is the in-engine model of a mounted exec surface: the wrapped
     binary, the fixed argv prefix, and every granted subcommand leaf.

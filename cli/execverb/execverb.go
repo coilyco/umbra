@@ -199,7 +199,8 @@ func wildcardLeaf(name string, gf *Guardfile, g Grant, wrap func(verb.Spec) cli.
 		Usage:           leafUsage(gf, g),
 		SkipFlagParsing: true,
 		Action: wrap(verb.Spec{
-			Name: strings.Join(gf.Group, "."),
+			Name:       strings.Join(gf.Group, "."),
+			SkipPolicy: gf.AllowMeta.Declared,
 			ArgsFunc: func(c *cli.Command) (map[string]string, []string) {
 				return nil, c.Args().Slice()
 			},
@@ -227,9 +228,10 @@ func buildAllow(root *cli.Command, gf *Guardfile, wrap func(verb.Spec) cli.Actio
 // `allow` entry, carrying the wrap-level guards onto its single wildcard grant.
 func allowMember(gf *Guardfile, bin string) *Guardfile {
 	return &Guardfile{
-		Group:  append(append([]string{}, gf.Group...), bin),
-		Bin:    bin,
-		Grants: []Grant{{Wildcard: true, Whens: append([]WhenClause{}, gf.WrapWhens...)}},
+		Group:     append(append([]string{}, gf.Group...), bin),
+		Bin:       bin,
+		AllowMeta: gf.AllowMeta,
+		Grants:    []Grant{{Wildcard: true, Whens: append([]WhenClause{}, gf.WrapWhens...)}},
 	}
 }
 
@@ -277,7 +279,8 @@ func mountGrant(root *cli.Command, gf *Guardfile, g Grant, wrap func(verb.Spec) 
 		Usage:           leafUsage(gf, g),
 		SkipFlagParsing: true, // every arg passes through to the wrapped binary
 		Action: wrap(verb.Spec{
-			Name: verbName,
+			Name:       verbName,
+			SkipPolicy: gf.AllowMeta.Declared,
 			ArgsFunc: func(c *cli.Command) (map[string]string, []string) {
 				return nil, c.Args().Slice()
 			},

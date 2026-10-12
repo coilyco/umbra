@@ -27,7 +27,8 @@ case "${1:-}" in
     echo "godoc-current.txt updated"
     ;;
   *)
-    expected_file=$(mktemp)
+    # macOS mktemp ignores TMPDIR unless given a template.
+    expected_file=$(mktemp "${TMPDIR:-/tmp}/godoc-current.XXXXXX")
     trap 'rm -f "$expected_file"' EXIT
     gen > "$expected_file"
     if ! diff -u godoc-current.txt "$expected_file"; then
