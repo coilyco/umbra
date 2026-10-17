@@ -1,6 +1,6 @@
 # umbra
 
-occlusion for agent CLIs and APIs
+occlusion for agent CLIs, APIs, and MCP servers
 
 ![umbra - occlusion for agent CLIs and APIs](assets/banner/umbra.jpg)
 
@@ -8,8 +8,10 @@ Occlusion is the idea. umbra is a least-privilege boundary between an agent and
 the host system, and what you did not declare does not get through. The boundary
 lives in a KDL guardfile rather than in code, so it is one artifact a reviewer
 reads in a sitting. umbra ships no denylist and knows nothing about your tools:
-policy is yours, and umbra enforces it across two surfaces, `cli/` around
-subprocess exec and `http/` around outbound requests.
+policy is yours, and umbra enforces it around CLIs (`cli/`, subprocess exec),
+APIs (`http/`, outbound requests), and MCP servers, where the tools an upstream
+advertises are pruned to the `can call` grants you wrote. To guard an MCP server
+with no Go, start at [guides/mcpverb-cli.md](guides/mcpverb-cli.md).
 
 It validates argv before `execve`, checks a scope token per verb, prunes every
 upstream surface to what was granted, and appends every call to a rotating JSONL
