@@ -5,7 +5,7 @@ go 1.25.5
 require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/calico32/kdl-go v0.14.1
-	github.com/getkin/kin-openapi v0.140.0
+	github.com/getkin/kin-openapi v0.149.0
 	github.com/jmespath-community/go-jmespath v1.1.1
 	github.com/modelcontextprotocol/go-sdk v1.7.0
 	github.com/olekukonko/tablewriter v1.1.4
@@ -34,12 +34,12 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.19 // indirect
-	github.com/oasdiff/yaml v0.1.0 // indirect
-	github.com/oasdiff/yaml3 v0.0.13 // indirect
+	github.com/oasdiff/yaml v0.1.1 // indirect
+	github.com/oasdiff/yaml3 v0.0.14 // indirect
 	github.com/olekukonko/cat v0.0.0-20250911104152-50322a0618f6 // indirect
 	github.com/olekukonko/errors v1.2.0 // indirect
 	github.com/olekukonko/ll v0.1.6 // indirect
-	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect
 	github.com/segmentio/encoding v0.5.4 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
