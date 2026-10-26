@@ -429,23 +429,47 @@ func checkWhens(ctx context.Context, whens []WhenClause, g Grant, args []string,
 }
 
 // evalWhen applies a guard's match rule: only/when refuses on no match, never/
-// deny-when on a match. Selector is argv or a `shell <cmd>` fact. See docs.
+// deny-when on a match. A flag selector reads every occurrence (COI-2977). See docs.
 func evalWhen(ctx context.Context, wc WhenClause, g Grant, args []string, host HostResolver) error {
 	values, err := selectorValues(ctx, wc, g, args, host)
 	if err != nil {
 		return err // a shell source that fails to resolve fails the guard closed
 	}
-	val, pat, matched := firstMatch(values, wc.Patterns)
 	if wc.Deny {
-		if matched {
+		if val, pat, matched := firstMatch(values, wc.Patterns); matched {
 			return fmt.Errorf("%s denied: %s %q matched %q", whenLabel(wc, g), selectorName(wc), val, pat)
 		}
 		return nil
 	}
-	if !matched {
-		return fmt.Errorf("%s denied: %s did not match any allowed pattern %v (fail-closed)", whenLabel(wc, g), selectorName(wc), wc.Patterns)
+	if len(wc.SourceCmd) == 0 && isFlagSelector(wc.Selector) {
+		for _, v := range values {
+			if _, _, ok := firstMatch([]string{v}, wc.Patterns); !ok {
+				return notAllowed(wc, g)
+			}
+		}
+		if len(values) == 0 {
+			return notAllowed(wc, g)
+		}
+		return nil
+	}
+	if _, _, matched := firstMatch(values, wc.Patterns); !matched {
+		return notAllowed(wc, g)
 	}
 	return nil
+}
+
+func notAllowed(wc WhenClause, g Grant) error {
+	return fmt.Errorf("%s denied: %s did not match any allowed pattern %v (fail-closed)", whenLabel(wc, g), selectorName(wc), wc.Patterns)
+}
+
+// isFlagSelector reports whether a selector names a flag rather than a
+// positional slot (`any-arg`, `argN`).
+func isFlagSelector(sel string) bool {
+	if sel == "any-arg" {
+		return false
+	}
+	rest, ok := strings.CutPrefix(sel, "arg")
+	return !ok || !isAllDigits(rest)
 }
 
 // selectorValues resolves a guard's value(s): an argv slot for an argv selector,
@@ -506,10 +530,7 @@ func resolveSelector(sel string, args []string, valueFlags ...string) []string {
 		}
 		return nil
 	default:
-		if v, ok := flagValue(args, "--"+sel); ok {
-			return []string{v}
-		}
-		return nil
+		return flagValues(args, "--"+sel)
 	}
 }
 
@@ -529,18 +550,29 @@ func isAllDigits(s string) bool {
 // flagValue returns flag's value in args (`--flag value` or `--flag=value`).
 // The bool reports presence; a valueless `--flag` is present, empty.
 func flagValue(args []string, flag string) (string, bool) {
+	if all := flagValues(args, flag); len(all) > 0 {
+		return all[0], true
+	}
+	return "", false
+}
+
+// flagValues returns the value of every occurrence of a flag, in argv order.
+func flagValues(args []string, flag string) []string {
+	var out []string
 	for i, a := range args {
 		if a == flag {
 			if i+1 < len(args) {
-				return args[i+1], true
+				out = append(out, args[i+1])
+			} else {
+				out = append(out, "")
 			}
-			return "", true
+			continue
 		}
 		if strings.HasPrefix(a, flag+"=") {
-			return a[len(flag)+1:], true
+			out = append(out, a[len(flag)+1:])
 		}
 	}
-	return "", false
+	return out
 }
 
 // leafUsage renders the one-line help: the real invocation (ExecArgv reflects

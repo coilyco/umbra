@@ -35,7 +35,7 @@ can run ssm put-parameter {
 }
 ```
 
-A `when` guard gets refusal. A pin gets **correctness by construction**. For a flag whose only safe value is one constant, the second is better: nothing to type, nothing to get wrong, and the guardfile stops depending on every caller remembering (umbra#6821). Passing the pinned value is not a conflict, so a caller who spells it out agrees with the policy rather than tripping it.
+A `when` guard gets refusal. A pin gets **correctness by construction**. For a flag whose only safe value is one constant, the second is better: nothing to type, nothing to get wrong, and the guardfile stops depending on every caller remembering (umbra#6821). Passing the pinned value is not a conflict, so a caller who spells it out agrees with the policy rather than tripping it. Every occurrence of a repeated flag is held to it (COI-2977).
 
 A pin implies `value-flag`, since a pinned flag necessarily takes a separate token, so an `argN` guard beside one does not read the pinned value as a positional.
 

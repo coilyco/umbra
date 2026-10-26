@@ -12,23 +12,25 @@ type FlagPin struct {
 	Value string
 }
 
-// applyPins refuses a conflicting caller value, then supplies every pin the
-// caller omitted. Runs before the gates, so a guard reads what will run.
+// applyPins refuses a conflicting value in any occurrence, then supplies each
+// pin the caller omitted. Runs before the gates, so a guard reads what will run.
 func applyPins(args []string, g Grant) ([]string, error) {
 	if len(g.Pins) == 0 {
 		return args, nil
 	}
 	out := append([]string{}, args...)
 	for _, p := range g.Pins {
-		got, ok := flagValue(out, p.Flag)
-		if !ok {
+		got := flagValues(out, p.Flag)
+		if len(got) == 0 {
 			out = append(out, p.Flag, p.Value)
 			continue
 		}
-		if got != p.Value {
-			return nil, fmt.Errorf(
-				"`%s` pins %s to %q, and this call passes %q. Drop the flag and let the guardfile supply it",
-				g.subcommandLabel(), p.Flag, p.Value, got)
+		for _, v := range got {
+			if v != p.Value {
+				return nil, fmt.Errorf(
+					"`%s` pins %s to %q, and this call passes %q. Drop the flag and let the guardfile supply it",
+					g.subcommandLabel(), p.Flag, p.Value, v)
+			}
 		}
 	}
 	return out, nil
