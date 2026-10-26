@@ -309,6 +309,63 @@ func TestWhenKwargAllowGuard(t *testing.T) {
 	}
 }
 
+// TestWhenFlagGuardReadsEveryOccurrence proves a repeated flag cannot retarget
+// past a `when`: gh and aws take the last occurrence, so every one must match.
+func TestWhenFlagGuardReadsEveryOccurrence(t *testing.T) {
+	const src = `wrap gh {
+		exec gh
+		can run "pr create" {
+			when repo matches "coilyco/allowed"
+		}
+	}`
+	for _, tc := range []struct {
+		name string
+		args []string
+		ok   bool
+	}{
+		{"one allowed", []string{"--repo", "coilyco/allowed"}, true},
+		{"allowed twice", []string{"--repo", "coilyco/allowed", "--repo=coilyco/allowed"}, true},
+		{"forbidden last", []string{"--repo", "coilyco/allowed", "--repo", "coilyco/other"}, false},
+		{"forbidden first", []string{"--repo", "coilyco/other", "--repo", "coilyco/allowed"}, false},
+		{"forbidden in the = form", []string{"--repo=coilyco/allowed", "--repo=coilyco/other"}, false},
+		{"absent", nil, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var cp capture
+			err := runArgv(t, src, &cp, append([]string{"gh", "pr", "create"}, tc.args...)...)
+			if tc.ok && err != nil {
+				t.Fatalf("refused: %v", err)
+			}
+			if !tc.ok {
+				if err == nil {
+					t.Fatalf("expected a refusal, forwarded %v", cp.argv)
+				}
+				if !strings.Contains(err.Error(), "did not match any allowed pattern") {
+					t.Errorf("refusal text drifted: %v", err)
+				}
+			}
+		})
+	}
+}
+
+// TestDenyWhenFlagGuardReadsEveryOccurrence proves a denied value is caught in
+// any occurrence, not only the first.
+func TestDenyWhenFlagGuardReadsEveryOccurrence(t *testing.T) {
+	const src = `wrap ward ops aws {
+		exec aws
+		can run secretsmanager get-secret-value {
+			deny-when secret-id matches "prod-*"
+		}
+	}`
+	var cp capture
+	if err := runArgv(t, src, &cp, "ops", "aws", "secretsmanager", "get-secret-value", "--secret-id", "dev-a", "--secret-id", "dev-b"); err != nil {
+		t.Fatalf("two allowed values refused: %v", err)
+	}
+	if err := runArgv(t, src, &cp, "ops", "aws", "secretsmanager", "get-secret-value", "--secret-id", "dev-a", "--secret-id", "prod-db"); err == nil {
+		t.Fatal("a denied value in the second occurrence must be refused")
+	}
+}
+
 // TestWhenPositionalIndexSelector proves `argN` reads one positional by index,
 // over the caller args after the matched subcommand path.
 func TestWhenPositionalIndexSelector(t *testing.T) {

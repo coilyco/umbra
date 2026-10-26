@@ -108,3 +108,20 @@ func TestParsePinDeclaresTheFlagsArity(t *testing.T) {
 		t.Error("pin must declare the flag as value-taking, else positionals(argv) reads SecureString as an arg")
 	}
 }
+
+// A repeat is read by the wrapped tool as its last value, so the pin has to
+// hold for every occurrence and not only the first (COI-2977).
+func TestPinRefusesAConflictingRepeat(t *testing.T) {
+	for _, argv := range [][]string{
+		{"--type", "SecureString", "--type", "String"},
+		{"--type=SecureString", "--type", "String"},
+		{"--type", "String", "--type", "SecureString"},
+	} {
+		if _, err := applyPins(argv, putParameterGrant()); err == nil {
+			t.Errorf("%v: a conflicting occurrence must be refused", argv)
+		}
+	}
+	if _, err := applyPins([]string{"--type", "SecureString", "--type=SecureString"}, putParameterGrant()); err != nil {
+		t.Errorf("repeating the pinned value agrees with the policy: %v", err)
+	}
+}
