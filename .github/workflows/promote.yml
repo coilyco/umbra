@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
-      - uses: coilyco/agentic-os/actions/setup-ci@22a3de8175621ad56b4c2c1b933b49b43cc5dcdc
+      - uses: coilyco/agentic-os/actions/setup-ci@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
           tools: just golangci-lint trufflehog
 
