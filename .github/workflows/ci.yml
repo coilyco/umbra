@@ -53,4 +53,4 @@ jobs:
         with:
           go-version: stable
       - name: govulncheck
-        run: go install golang.org/x/vuln/cmd/govulncheck@latest && govulncheck ./...
+        run: bash scripts/ci/govulncheck.sh

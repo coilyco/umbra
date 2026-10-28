@@ -57,6 +57,12 @@ jobs:
         timeout-minutes: 5
         run: golangci-lint run --timeout=5m ./...
 
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+      - name: govulncheck
+        run: bash scripts/ci/govulncheck.sh
+
       - name: Scan filesystem for secrets
         run: bash scripts/ci/trufflehog-scan.sh
 
