@@ -28,15 +28,16 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: go.mod
-      - uses: coilyco/agentic-os/actions/setup-ci@dec64b18f8f74cc792af630d91b2a1814fd5940d
+      - uses: coilyco/agentic-os/actions/setup-ci@22a3de8175621ad56b4c2c1b933b49b43cc5dcdc
         with:
           tools: just golangci-lint trufflehog
 
       - id: app
-        uses: coilyco/agentic-os/actions/app-token@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/agentic-os/actions/app-token@22a3de8175621ad56b4c2c1b933b49b43cc5dcdc
         with:
           app_id: ${{ secrets.COILYCO_OPS_APP_ID }}
           private_key_base64: ${{ secrets.COILYCO_OPS_APP_PRIVATE_KEY_BASE64 }}
+          workflows: write
 
       - name: go vet
         run: go vet ./...
