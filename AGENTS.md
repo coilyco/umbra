@@ -47,11 +47,11 @@ v0.x. Minor API breaks ship in `main` with a note in the commit body, with no se
 
 ## Release
 
-Automated and Forgejo-canonical, in two stages. A push to `main` runs
-[`promote.yml`](.forgejo/workflows/promote.yml), which re-runs the full gate,
+Automated on GitHub Actions, in two stages. A push to `main` runs
+[`promote.yml`](.github/workflows/promote.yml), which re-runs the full gate,
 publishes a commit-scoped draft tag, and fast-forwards `release`.
-[`release.yml`](.forgejo/workflows/release.yml) runs on that push and cuts the
-minor bump, tag, and Forgejo release. Major is hand-driven only, never inferred
+[`release.yml`](.github/workflows/release.yml) runs on that push and cuts the
+minor bump, tag, and GitHub release. Major is hand-driven only, never inferred
 from commit messages. Releases attach the `umbra` binary matrix, `SHA256SUMS`,
 a Homebrew formula, and a Scoop manifest, then update the shared tap and bucket.
 Full flow in [docs/release-pipeline.md](docs/release-pipeline.md).

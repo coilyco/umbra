@@ -1,5 +1,5 @@
 # Stage 1 of the two-stage release flow: gate main, draft-tag, fast-forward `release`.
-# Token scopes and the persist-credentials trap: docs/release-pipeline.md.
+# The App token starts release.yml, which a GITHUB_TOKEN push would not.
 
 name: promote
 
@@ -13,19 +13,30 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   gate-and-promote:
-    runs-on: docker
-    timeout-minutes: 15
-    container:
-      image: forgejo.coilysiren.me/coilyco-flight-deck/agentic-os:release
+    if: github.repository_owner == 'coilyco'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: coilyco/agentic-os/actions/setup-ci@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        with:
+          tools: just golangci-lint trufflehog
+
+      - id: app
+        uses: coilyco/agentic-os/actions/app-token@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        with:
+          app_id: ${{ secrets.COILYCO_OPS_APP_ID }}
+          private_key_base64: ${{ secrets.COILYCO_OPS_APP_PRIVATE_KEY_BASE64 }}
 
       - name: go vet
         run: go vet ./...
@@ -51,16 +62,14 @@ jobs:
 
       - name: Publish draft release tag
         env:
-          PROMOTE_TOKEN: ${{ secrets.CI_RELEASE_TOKEN }}
+          PROMOTE_TOKEN: ${{ steps.app.outputs.token }}
           REPO: ${{ github.repository }}
-          SERVER: ${{ github.server_url }}
         run: bash scripts/ci/publish-draft-tag.sh
 
       - name: Promote main to release (fast-forward only)
         env:
-          PROMOTE_TOKEN: ${{ secrets.CI_RELEASE_TOKEN }}
+          PROMOTE_TOKEN: ${{ steps.app.outputs.token }}
           REPO: ${{ github.repository }}
-          SERVER: ${{ github.server_url }}
         run: bash scripts/ci/promote-to-release.sh
 
       - name: Alert Sentry on main failure
