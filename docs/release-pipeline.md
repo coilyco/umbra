@@ -1,14 +1,14 @@
 # Release pipeline, lint config, and the mark
 
-Forgejo is the canonical and only publication surface for umbra. GitHub does not build, publish, or deploy anything. umbra is the base library of the umbra / ward stack.
+Development is on Forgejo and every release is built and published on GitHub Actions (COI-2945), where the Go module is fetched from. umbra is the base library of the umbra / ward stack.
 
 ## Two-stage flow
 
 `main` is the integration branch, `release` is last-known-good, and only gate-green shas release.
 
-A push to `main` fires `promote.yml`: the full repo gate (vet, build, race test, godoc-current, mod tidy, golangci-lint, secret scan) runs, then it publishes the commit-scoped draft tag `draft-${sha}` and only then fast-forwards `release` to that sha. The promote push uses a real-user PAT with `write:repository` **and** `read:user`, because job-token pushes and PATs missing `read:user` get an empty actor and silently enqueue no workflow. Its checkout sets `persist-credentials: false`: otherwise checkout stores the job token as an http extraheader in the local git config, and that header overrides the PAT in the push URL, so the push lands as the internal Actions user, whose pushes Forgejo deliberately never enqueues workflows for.
+A push to `main` fires `promote.yml`: the full repo gate (vet, build, race test, godoc-current, mod tidy, golangci-lint, secret scan) runs, then it publishes the commit-scoped draft tag `draft-${sha}` and only then fast-forwards `release` to that sha. Both pushes use a coilyco-ops App installation token (`actions/app-token`), because a `GITHUB_TOKEN` push starts no workflow, so `release.yml` would never run. The checkout sets `persist-credentials: false` so the stored job token cannot override the push URL.
 
-The `release` push fires `release.yml` under a no-cancel concurrency queue, so promoted shas release in sequence. It verifies the matching draft tag, applies the automatic minor bump (major stays hand-driven), creates the tag, builds the six-platform `umbra` matrix, renders and verifies the Homebrew formula and Scoop manifest, creates the Forgejo release with every binary plus `SHA256SUMS`, waits up to 20 minutes for the ser8 mirror to copy every asset the formula and manifest name to GitHub (an asset that answered once stays counted, because the runner's route to GitHub drops connections now and then), then updates the shared tap and bucket. A bump that landed first would 404 every install, and a wait that runs out fails the job loudly with the missing URLs, leaving the tap on the last good version.
+The `release` push fires `release.yml` under a no-cancel concurrency queue, so promoted shas release in sequence. It verifies the matching draft tag, applies the automatic minor bump (major stays hand-driven), creates the tag, builds the six-platform `umbra` matrix, renders and verifies the Homebrew formula and Scoop manifest, and creates the GitHub release with every binary plus `SHA256SUMS`. `wait-github-assets.sh` then confirms every asset the formula and manifest name answers, and only then `release-publish-package.sh` commits the formula to `coilyco/homebrew-tap` and the manifest to `coilyco/scoop-bucket`, rebasing and retrying when another train moved them. A wait that runs out fails the job loudly with the missing URLs, leaving the tap on the last good version.
 
 ## golangci config notes
 

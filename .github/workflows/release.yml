@@ -13,19 +13,33 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   release:
-    runs-on: docker
-    container: forgejo.coilysiren.me/coilyco-flight-deck/agentic-os:release
+    if: github.repository_owner == 'coilyco'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     outputs:
       tag: ${{ steps.tag.outputs.new_tag }}
       version: ${{ steps.tag.outputs.new_version }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: coilyco/agentic-os/actions/setup-ci@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        with:
+          tools: just
+
+      - id: app
+        uses: coilyco/agentic-os/actions/app-token@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        with:
+          app_id: ${{ secrets.COILYCO_OPS_APP_ID }}
+          private_key_base64: ${{ secrets.COILYCO_OPS_APP_PRIVATE_KEY_BASE64 }}
+          repositories: umbra,homebrew-tap,scoop-bucket
 
       - id: draft
         name: Derive the draft release tag
@@ -37,7 +51,9 @@ jobs:
         run: bash scripts/ci/verify-draft-tag.sh
 
       - id: tag
-        uses: coilysiren/agentic-os/actions/tag-bump@main
+        uses: coilyco/agentic-os/actions/tag-bump@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        with:
+          token: ${{ steps.app.outputs.token }}
 
       - name: Build packaged umbra CLI and package metadata
         if: ${{ steps.tag.outputs.new_tag != '' }}
@@ -47,92 +63,102 @@ jobs:
 
       - id: create
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/create-release@main
+        uses: coilyco/agentic-os/actions/create-release@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           tag: ${{ steps.tag.outputs.new_tag }}
           name: ${{ steps.tag.outputs.new_tag }}
           body: ${{ steps.tag.outputs.changelog }}
 
       - name: Upload umbra-linux-amd64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra-linux-amd64
 
       - name: Upload umbra-linux-arm64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra-linux-arm64
 
       - name: Upload umbra-darwin-amd64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra-darwin-amd64
 
       - name: Upload umbra-darwin-arm64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra-darwin-arm64
 
       - name: Upload umbra-windows-amd64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra-windows-amd64.exe
 
       - name: Upload umbra-windows-arm64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra-windows-arm64.exe
 
       - name: Upload SHA256SUMS
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/SHA256SUMS
 
       - name: Upload umbra Homebrew formula
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra.rb
 
       - name: Upload umbra Scoop manifest
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilysiren/agentic-os/actions/upload-release-asset@main
+        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
         with:
+          token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
           file: dist/umbra.json
 
-      - name: Wait for the GitHub mirror to copy the release assets
+      - name: Wait for every release asset to answer on GitHub
         if: ${{ steps.tag.outputs.new_tag != '' }}
         run: bash scripts/ci/wait-github-assets.sh dist
 
       - name: Update the Homebrew tap
         if: ${{ steps.tag.outputs.new_tag != '' }}
         env:
-          TAP_WRITE_TOKEN: ${{ secrets.TAP_WRITE_TOKEN }}
+          APP_TOKEN: ${{ steps.app.outputs.token }}
           TAG: ${{ steps.tag.outputs.new_tag }}
-        run: bash scripts/ci/update-homebrew-tap.sh
+        run: bash scripts/ci/release-publish-package.sh homebrew-tap dist/umbra.rb Formula/umbra.rb
 
       - name: Update the Scoop bucket
         if: ${{ steps.tag.outputs.new_tag != '' }}
         env:
-          SCOOP_WRITE_TOKEN: ${{ secrets.SCOOP_WRITE_TOKEN }}
+          APP_TOKEN: ${{ steps.app.outputs.token }}
           TAG: ${{ steps.tag.outputs.new_tag }}
-        run: bash scripts/ci/update-scoop-bucket.sh
+        run: bash scripts/ci/release-publish-package.sh scoop-bucket dist/umbra.json bucket/umbra.json
 
       - name: Alert Sentry on release failure
         if: ${{ failure() && github.ref == 'refs/heads/release' }}

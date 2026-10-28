@@ -4,15 +4,11 @@
 set -euo pipefail
 
 if [ -z "${PROMOTE_TOKEN:-}" ]; then
-  echo "::error::CI_RELEASE_TOKEN not set; draft release publishing needs a real-user PAT so the push is attributable" >&2
+  echo "::error::the App token is missing; the draft tag push must be attributable and start workflows" >&2
   exit 1
 fi
 
-# server_url resolves to the in-cluster http URL on this runner, so keep its
-# scheme instead of assuming https.
-proto="${SERVER%%://*}"
-host="${SERVER#*://}"
-remote_url="${proto}://oauth2:${PROMOTE_TOKEN}@${host}/${REPO}.git"
+remote_url="https://x-access-token:${PROMOTE_TOKEN}@github.com/${REPO}.git"
 draft_tag="draft-${GITHUB_SHA}"
 
 if git ls-remote --exit-code --tags "${remote_url}" "refs/tags/${draft_tag}" >/dev/null 2>&1; then
