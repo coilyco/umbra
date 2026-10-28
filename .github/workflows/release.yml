@@ -63,9 +63,10 @@ jobs:
 
       - id: create
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/create-release@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/agentic-os/actions/create-release@36db75353af8c6c8026dee6d25866930825c60b3
         with:
           token: ${{ steps.app.outputs.token }}
+          make_latest: "true"
           tag: ${{ steps.tag.outputs.new_tag }}
           name: ${{ steps.tag.outputs.new_tag }}
           body: ${{ steps.tag.outputs.changelog }}
