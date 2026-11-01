@@ -1,6 +1,6 @@
 # Release pipeline, lint config, and the mark
 
-Development is on Forgejo and every release is built and published on GitHub Actions (COI-2945), where the Go module is fetched from. umbra is the base library of the umbra / ward stack.
+Development and every release build are on GitHub Actions (COI-2945, COI-3134), where the Go module is fetched from. umbra is the base library of the umbra / ward stack.
 
 ## Two-stage flow
 
