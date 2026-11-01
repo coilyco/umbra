@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/calico32/kdl-go v0.16.0
-	github.com/getkin/kin-openapi v0.140.0 // held below v0.143.0, see COI-3135
+	github.com/getkin/kin-openapi v0.142.0 // held below v0.143.0, see COI-3135
 	github.com/jmespath-community/go-jmespath v1.1.1
 	github.com/modelcontextprotocol/go-sdk v1.8.0
 	github.com/olekukonko/tablewriter v1.1.5
