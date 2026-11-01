@@ -290,3 +290,29 @@ func TestAResponseOfferingJSONAmongOthersIsParsed(t *testing.T) {
 		t.Error("a response offering JSON was treated as raw")
 	}
 }
+
+// selfRefAdditionalPropertiesSpec is the GHSA-mh7x-f8wq-4jhx input, a schema whose
+// $ref targets its own additionalProperties. It panics kin-openapi before v0.145.0.
+const selfRefAdditionalPropertiesSpec = `openapi: 3.0.3
+info: {title: t, version: "1.0.0"}
+paths: {}
+components:
+  schemas:
+    A:
+      $ref: '#/components/schemas/A/additionalProperties'
+`
+
+// TestLoaderPanicBecomesError proves every path that hands spec bytes to the loader
+// returns an error for the mh7x input instead of letting the panic kill the process.
+func TestLoaderPanicBecomesError(t *testing.T) {
+	raw := []byte(selfRefAdditionalPropertiesSpec)
+	if _, err := parseOpenAPI3(raw); err == nil {
+		t.Error("parseOpenAPI3: want an error, got nil")
+	}
+	if _, err := pruneOpenAPI3(raw, &guardfile.Guardfile{}); err == nil {
+		t.Error("pruneOpenAPI3: want an error, got nil")
+	}
+	if is3, ok := sniffOpenAPI3(raw); is3 || ok {
+		t.Errorf("sniffOpenAPI3 = (%v, %v), want (false, false)", is3, ok)
+	}
+}

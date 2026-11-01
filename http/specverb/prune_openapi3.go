@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/coilyco/umbra/http/guardfile"
-	"github.com/getkin/kin-openapi/openapi3"
 )
 
 // componentRefPrefix is the JSON-pointer root every OpenAPI 3.x component $ref
@@ -28,7 +27,7 @@ func pruneOpenAPI3(spec []byte, gf *guardfile.Guardfile) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	doc, err := openapi3.NewLoader().LoadFromData(spec)
+	doc, err := loadOpenAPI3(spec)
 	if err != nil {
 		return nil, fmt.Errorf("specverb: prune: load openapi 3.x: %w", err)
 	}

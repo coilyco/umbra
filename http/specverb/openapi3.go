@@ -105,10 +105,21 @@ func newSpec(doc *openapi3.T) *spec {
 	return s
 }
 
+// loadOpenAPI3 turns a kin-openapi loader panic (GHSA-mh7x-f8wq-4jhx, held out by
+// the go.mod pin, COI-3137) into an error so callers fail closed.
+func loadOpenAPI3(raw []byte) (doc *openapi3.T, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			doc, err = nil, fmt.Errorf("specverb: openapi 3.x loader panic: %v", r)
+		}
+	}()
+	return openapi3.NewLoader().LoadFromData(raw)
+}
+
 // sniffOpenAPI3 reports whether raw loads as an OpenAPI 3.x document, the YAML
 // fallback path when JSON version-sniffing did not settle the version.
 func sniffOpenAPI3(raw []byte) (is3 bool, ok bool) {
-	doc, err := openapi3.NewLoader().LoadFromData(raw)
+	doc, err := loadOpenAPI3(raw)
 	if err != nil || doc == nil {
 		return false, false
 	}
@@ -118,8 +129,7 @@ func sniffOpenAPI3(raw []byte) (is3 bool, ok bool) {
 // parseOpenAPI3 loads an OpenAPI 3.x document (JSON or YAML) into the engine IR.
 // kin-openapi dereferences internal $refs as it loads. See docs/specverb.md.
 func parseOpenAPI3(raw []byte) (*spec, error) {
-	loader := openapi3.NewLoader()
-	doc, err := loader.LoadFromData(raw)
+	doc, err := loadOpenAPI3(raw)
 	if err != nil {
 		return nil, fmt.Errorf("specverb: parse openapi 3.x: %w", err)
 	}
