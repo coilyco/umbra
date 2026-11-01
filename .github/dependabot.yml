@@ -1,3 +1,4 @@
+# kin-openapi stays below v0.143.0, which breaks spec-lock pruning (COI-3135).
 version: 2
 updates:
   - package-ecosystem: gomod
@@ -9,6 +10,9 @@ updates:
         applies-to: version-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "github.com/getkin/kin-openapi"
+        versions: [">=0.143.0"]
     labels:
       - dependencies
       - go
