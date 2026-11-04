@@ -30,12 +30,12 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version: stable
-      - uses: coilyco/agentic-os/actions/setup-ci@dec64b18f8f74cc792af630d91b2a1814fd5940d
+      - uses: coilyco/.github/actions/setup-ci@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           tools: just
 
       - id: app
-        uses: coilyco/agentic-os/actions/app-token@22a3de8175621ad56b4c2c1b933b49b43cc5dcdc
+        uses: coilyco/.github/actions/app-token@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           app_id: ${{ secrets.COILYCO_OPS_APP_ID }}
           private_key_base64: ${{ secrets.COILYCO_OPS_APP_PRIVATE_KEY_BASE64 }}
@@ -51,7 +51,7 @@ jobs:
         run: bash scripts/ci/verify-draft-tag.sh
 
       - id: tag
-        uses: coilyco/agentic-os/actions/tag-bump@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/tag-bump@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
 
@@ -63,7 +63,7 @@ jobs:
 
       - id: create
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/create-release@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/create-release@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           tag: ${{ steps.tag.outputs.new_tag }}
@@ -72,7 +72,7 @@ jobs:
 
       - name: Upload umbra-linux-amd64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
@@ -80,7 +80,7 @@ jobs:
 
       - name: Upload umbra-linux-arm64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
@@ -88,7 +88,7 @@ jobs:
 
       - name: Upload umbra-darwin-amd64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
@@ -96,7 +96,7 @@ jobs:
 
       - name: Upload umbra-darwin-arm64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
@@ -104,7 +104,7 @@ jobs:
 
       - name: Upload umbra-windows-amd64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
@@ -112,7 +112,7 @@ jobs:
 
       - name: Upload umbra-windows-arm64
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
@@ -120,7 +120,7 @@ jobs:
 
       - name: Upload SHA256SUMS
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
@@ -128,7 +128,7 @@ jobs:
 
       - name: Upload umbra Homebrew formula
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
@@ -136,7 +136,7 @@ jobs:
 
       - name: Upload umbra Scoop manifest
         if: ${{ steps.tag.outputs.new_tag != '' }}
-        uses: coilyco/agentic-os/actions/upload-release-asset@dec64b18f8f74cc792af630d91b2a1814fd5940d
+        uses: coilyco/.github/actions/upload-release-asset@b975f9dbb2a7c7dd7315f4b53dd3212c9b1e2685
         with:
           token: ${{ steps.app.outputs.token }}
           release_id: ${{ steps.create.outputs.release_id }}
